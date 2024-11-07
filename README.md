@@ -60,7 +60,6 @@ class ExtractArticleText {
         window: {
             // PAGE_SETUP: ...
             // PAGE_LOAD: ...
-
             PAGE_CAPTURE: async (event, BehaviorBus, window) => {
                  const article_text = window.document.body.innerText
                  BehaviorBus.emit({type: 'DISCOVERED_TEXT', selector: 'body', text: article_text})
