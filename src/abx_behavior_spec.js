@@ -247,14 +247,14 @@ var all_exports = { BehaviorEvent, WindowBehaviorBus, PuppeteerBehaviorBus, Serv
 
 if (globalThis.navigator) {
     // loaded from browser, running in window
-    console.log(`[window] importing src/behavior_bus.js ...`);
+    console.log(`[window] importing src/abx_behavior_spec.js ...`);
     for (const key of Object.keys(all_exports)) {
         globalThis[key] = all_exports[key];
         console.log(`[window] loaded window.${key}`);
     }
 } else {
     // loaded from node, running in puppeteer
-    console.log(`[puppeteer] importing src/behavior_bus.js ...`);
+    console.log(`[puppeteer] importing src/abx_behavior_spec.js ...`);
     for (const key of Object.keys(all_exports)) {
         console.log(`[puppeteer] loaded global.${key}`);
     }
