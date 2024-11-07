@@ -50,6 +50,7 @@ class BehaviorEvent extends CustomEvent {
         const event_detail = _validateBehaviorEvent({
             type,                                 // e.g. 'PAGE_LOAD'
             metadata: {
+                schema: 'BehaviorEventSchema@0.1.0',
                 id: crypto.randomUUID(),          // e.g. '1234-5678-90ab-cdef'
                 timestamp: Date.now(),            // e.g. 1715177600000
                 path: [],                         // e.g. ['window', 'puppeteer'], or ['serviceWorker', 'window', 'puppeteer']
@@ -74,6 +75,8 @@ class BehaviorEvent extends CustomEvent {
 
 // Base class with common event handling logic
 class BaseBehaviorBus extends EventTarget {
+    schema = 'BehaviorBusSchema@0.1.0';
+
     // const broadcast = (event) => {PuppeteerBus_dispatch(event), ServiceWorkerBus_dispatch(event), WindowBus_dispatch(event)}
     // const BehaviorBus = new WindowBehaviorBus('window', on_emit_event_listener=broadcast)
     constructor() {
@@ -183,15 +186,9 @@ class BaseBehaviorBus extends EventTarget {
     }
 
     // aliases
-    on(type, handler) {
-        this.addEventListener(type, handler);
-    }
-    emit(event) {
-        this.dispatchEvent(event);
-    }
-    dispatch(event) {
-        this.dispatchEvent(event);
-    }
+    on(type, handler) {this.addEventListener(type, handler);}
+    emit(event) {this.dispatchEvent(event);}
+    dispatch(event) {this.dispatchEvent(event);}
 }
 
 class WindowBehaviorBus extends BaseBehaviorBus {
