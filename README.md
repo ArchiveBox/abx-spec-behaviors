@@ -34,7 +34,7 @@ To create an inter-operable spec for plugins that many scraper and digital archi
 - https://mediaforcellc.com
 - https://www.starlinglab.org
 
-> * Want to collaborate? Discuss on the [ArchiveBox Zulip](https://zulip.archivebox.io/#narrow/stream/163-ideas/topic/new.20Behavior.20specification.20for.20community.20ecosystem.20plugins), or [WebRecorder Discord](https://discord.com/channels/895426029194207262/1303099855262187715/1303955724442931202), or open an issue.*
+> *Want to collaborate? Discuss on the [ArchiveBox Zulip](https://zulip.archivebox.io/#narrow/stream/163-ideas/topic/new.20Behavior.20specification.20for.20community.20ecosystem.20plugins), or [WebRecorder Discord](https://discord.com/channels/895426029194207262/1303099855262187715/1303955724442931202), or open an issue.*
 
 #### Use Cases
 
