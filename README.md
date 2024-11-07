@@ -78,7 +78,7 @@ const DiscoverOutlinks = {
 }
 ```
 
-To see more example behaviors, check out: `src/example_behaviors.js`.
+To see more example behaviors, check out: [`src/example_behaviors.js`](https://github.com/ArchiveBox/behaviors-spec/blob/main/src/example_behaviors.js).
 
 <br/>
 
@@ -180,8 +180,8 @@ PuppeteerBehaviorBus.addEventListener('*', (event) => {
 
 For the full linking code, see here:
 
-- `src/example_puppeteer_driver.js: linkPuppeteerBusToWindowBus(...)` 
-- `src/example_puppeteer_driver.js: linkPuppeteerBusToServiceWorkerBus(...)` 
+- [`src/example_puppeteer_driver.js: linkPuppeteerBusToWindowBus(...)`](https://github.com/ArchiveBox/behaviors-spec/blob/main/src/example_puppeteer_driver.js)
+- [`src/example_puppeteer_driver.js: linkPuppeteerBusToServiceWorkerBus(...)`](https://github.com/ArchiveBox/behaviors-spec/blob/main/src/example_puppeteer_driver.js)
 
 <br/>
 
@@ -269,10 +269,10 @@ const BrowserCrawlDriver = {
 
 To see how Behaviors would be run by different tools, check out the example drivers:
 
-- `src/example_puppeteer_driver.js`
-- `src/example_browser_driver.js`
-- `src/example_browsertrix_driver.js`
-- `src/example_archivebox_driver.js`
+- [`src/example_puppeteer_driver.js`](https://github.com/ArchiveBox/behaviors-spec/blob/main/src/example_puppeteer_driver.js)
+- [`src/example_browser_driver.js`](https://github.com/ArchiveBox/behaviors-spec/blob/main/src/example_browser_driver.js)
+- [`src/example_browsertrix_driver.js`](https://github.com/ArchiveBox/behaviors-spec/blob/main/src/example_browsertrix_driver.js)
+- [`src/example_archivebox_driver.js`](https://github.com/ArchiveBox/behaviors-spec/blob/main/src/)
 
 <br/>
 
