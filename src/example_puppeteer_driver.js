@@ -7,13 +7,16 @@ import fs from 'node:fs';
 import { BehaviorEvent, PuppeteerBehaviorBus } from './behavior_bus.js';
 import { BEHAVIORS } from './example_behaviors.js';
 
+process.chdir(import.meta.dirname);
+
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 
 const linkPuppeteerBusToWindowBus = async (PuppeteerBehaviorBus, page) => {
     // add the behavior bus code & behaviors code to the page
-    const behavior_bus_js = fs.readFileSync('./behavior_bus.js', 'utf8').split('\nexport {')[0];
+    const behavior_bus_js = fs.readFileSync(`./behavior_bus.js`, 'utf8').split('\nexport {')[0];
     await page.evaluate(behavior_bus_js);
-    const behaviors_js = fs.readFileSync('./example_behaviors.js', 'utf8').split('\nexport {')[0];
+    const behaviors_js = fs.readFileSync(`./example_behaviors.js`, 'utf8').split('\nexport {')[0];
     await page.evaluate(behaviors_js);
 
     // set up console log forwarding
@@ -24,7 +27,6 @@ const linkPuppeteerBusToWindowBus = async (PuppeteerBehaviorBus, page) => {
     // set up BehaviorBus inside window context
     await page.evaluate(() => {
         window.BehaviorBus = new WindowBehaviorBus(window.BEHAVIORS, window)
-        console.log(`[window] initialized global.BehaviorBus = WindowBehaviorBus()`);
     });
 
     // set up forwarding from WindowBehaviorBus -> PuppeteerBehaviorBus
@@ -72,9 +74,9 @@ const linkPuppeteerBusToServiceWorkerBus = async (PuppeteerBehaviorBus, browser,
     });
 
     // add the behavior bus code & behaviors code to the page
-    const behavior_bus_js = fs.readFileSync('./behavior_bus.js', 'utf8').split('\nexport {')[0];
+    const behavior_bus_js = fs.readFileSync(`./behavior_bus.js`, 'utf8').split('\nexport {')[0];
     await service_worker.evaluate(behavior_bus_js);    
-    const behaviors_js = fs.readFileSync('./example_behaviors.js', 'utf8').split('\nexport {')[0];
+    const behaviors_js = fs.readFileSync(`./example_behaviors.js`, 'utf8').split('\nexport {')[0];
     await service_worker.evaluate(behaviors_js);
 
     // set up BehaviorBus inside serviceWorker context
