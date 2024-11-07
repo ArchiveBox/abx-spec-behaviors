@@ -282,7 +282,7 @@ BehaviorBus.emit(new BehaviorEvent('PAGE_LOAD', {url: window.location.href}))
 Drivers are designed to implement the core events used by all the other behaviors as
 their "standard library" of utilities, e.g. filesystem IO, adding to crawl queue, etc...
 
-Drivers can also maintain some persistent state across crawl.
+Drivers can maintain some persistent state across crawl as well (just like `Behaviors`).
 ```javascript
 const BrowserCrawlDriver = {
     name: 'BrowserCrawlDriver',
