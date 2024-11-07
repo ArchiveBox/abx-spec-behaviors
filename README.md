@@ -1,4 +1,4 @@
-# `behaviors-spec` @ `v0.1.0`
+# `behavior-spec` @ `v0.1.0`
 
 > `BehaviorSchema, `BehaviorBusSchema`, `BehaviorEventSchema`, `BehaviorDriverSchema`
 
