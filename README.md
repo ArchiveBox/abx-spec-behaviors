@@ -37,8 +37,8 @@ Want to collaborate on it? Come join the discussion on the [ArchiveBox Zulip](ht
 
 #### Use Cases
 
-No one wants to maintain all the little user scripts needed effectively crawl millions of different websites.  
-Here are some examples of things that could be implemented as behaviors and shared between these tools:
+No one wants to maintain all the user scripts needed effectively crawl millions of different websites alone.  
+Here are some examples of things that could be implemented as behaviors and shared between these communities:
 
 - `scroll down to load infiniscroll content`
 - `expand/unroll reddit/twitter comment threads automatically`
