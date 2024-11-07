@@ -14,6 +14,8 @@ Designed to allow expending a puppeteer or browser-based workflow with custom JS
 - [`BehaviorEvent`](#behaviorevent): an event `{type: 'PAGE_LOAD', url}` that goes through a `BehaviorBus`
 - [`BehaviorDriver`](#behaviordriver): navigates to URLs, sets up `BehaviorBus` instances for browser/puppeteer/extensions, registers all the `Behavior` event listeners, and fires main crawl lifecycle events 
 
+**Dependencies:** *None*, relies only on JS standard library `EventTarget` which is native in both browser and Node.
+
 ## Quickstart
 
 ```bash
