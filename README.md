@@ -56,10 +56,23 @@ const DiscoverOutlinks = {
      // serviceworker: ...
     },
 }
+class ExtractArticleText {
+    name: 'ExtractArticleText',
+    schema: 'BehaviorSchema@0.1.0',
+    hooks: {
+        window: {
+            PAGE_CAPTURE: async (event, BehaviorBus, window) => {
+                 const article_text = window.document.body.innerText
+                 BehaviorBus.emit({type: 'DISCOVERED_TEXT', selector: 'body', text: article_text})
+                 BehaviorBus.emit({type: 'FS_WRITE_FILE', path: 'article.txt', content: article_text})
+            },
+        },
+    },
+}
 
-await crawlInBrowser('https://example.com', [DiscoverOutlinks])
+await crawlInBrowser('https://example.com', [ExtractArticleText, DiscoverOutlinks])
 // OR
-await crawlInPuppeteer('https://example.com', [DiscoverOutlinks])
+await crawlInPuppeteer('https://example.com', [ExtractArticleText, DiscoverOutlinks])
 ```
 
 To see more example behaviors, check out:
