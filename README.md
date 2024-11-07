@@ -2,7 +2,7 @@
 
 > `BehaviorSchema`, `BehaviorBusSchema`, `BehaviorEventSchema`, `BehaviorDriverSchema`
 
-Proposal for a shared user script specification between archiving &amp; crawling tools.
+Proposal for a shared user script specification between archiving &amp; crawling tools, building on the ideas from [`browsertrix-behaviors`](https://github.com/webrecorder/browsertrix-behaviors).
 
 Designed to allow expending a puppeteer or browser-based workflow with custom JS snippets.  
 (similar to TamperMonkey, but more powerful and designed to extend more pieces of the archiving flow)
@@ -351,3 +351,37 @@ $ node ./example_puppeteer_driver.js
 <br/>
 
 ---
+
+## Goals
+
+To create an inter-operable spec for plugins that many scraper and digital archiving projects can share. Aiming for collaboration between:
+
+- https://ArchiveBox.io
+- https://webrecorder.net (https://github.com/webrecorder/browsertrix-behaviors)
+- https://archive.org
+- https://conifer.rhizome.org
+- https://www.starlinglab.org
+- https://reset.tech
+- https://linkwarden.app
+- https://github.com/gildas-lormeau/singlefile
+- Want to collaborate on it? [Come join the discussion](https://zulip.archivebox.io)
+
+No one wants to maintain all the little user scripts needed for crawling on their own. Here are some examples of things that could be implemented as behaviors and shared between these tools:
+
+- scroll down to load infiniscroll content
+- expand/unroll reddit/twitter comment threads automatically
+- auto-solve CAPTCHAs
+- log into a site using some saved credentils
+- dismiss modals / cookie consent popups / privacy policies
+- block ads requests / remove ads elements from page
+- extract youtube videos/audio/subtitles to mp4/mp3/sub files
+- and more
+
+
+## Further Reading
+
+- Proposal Discussion https://discord.com/channels/895426029194207262/1303099855262187715/1303955724442931202
+- Development Accouncement: https://docs.sweeting.me/s/archivebox-plugin-ecosystem-announcement
+- Browsertrix's existing behaviors system: https://github.com/webrecorder/browsertrix-behaviors
+- Inspired by: https://pluggy.readthedocs.io/en/stable/index.html
+- Built on: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
