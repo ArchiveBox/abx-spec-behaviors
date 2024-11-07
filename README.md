@@ -263,7 +263,7 @@ See `src/event_bus.js` for the full implementation.
   
 Drivers set this up before a page is first loaded so that behavior code running in any context can coordinate
 across all the contexts available to the driver. e.g. a behavior hook running inside a page on `WindowBehaviorBus` can
-emit an event that triggers a hook it defines on the `PuppeteerBehaviorBus`. This means `BehaviorEvent`s will "jailbreak"
+emit an event that triggers a hook it defined on the `PuppeteerBehaviorBus`. This means `BehaviorEvent`s will "jailbreak"
 out of a page's typically isolated context and propagate up to a parent puppeteer context, and vice versa.
 
 ```javascript
