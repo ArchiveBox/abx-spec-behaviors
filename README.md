@@ -129,3 +129,40 @@ linked PuppeteerBehaviorBus() <-> WindowBehaviorBus()
 [puppeteer] -> [window]: {"type":"PAGE_CAPTURE_COMPLETE","metadata":{"id":"c5bed695-db37-43b2-8bc5-eab058642c75","timestamp":1730956451353,"path":["PuppeteerCrawlDriver","PuppeteerBehaviorBus","PuppeteerBusToWindowBusForwarder"]},"url":"https://example.com"}
 [window] -> [LOG] : {"type":"PAGE_CAPTURE_COMPLETE","metadata":{"id":"c5bed695-db37-43b2-8bc5-eab058642c75","timestamp":1730956451353,"path":["PuppeteerCrawlDriver","PuppeteerBehaviorBus","PuppeteerBusToWindowBusForwarder","WindowBehaviorBus"]},"url":"https://example.com"}
 ```
+
+---
+
+## BehaviorBus Implementation
+
+`BehaviorBus` extends [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) and is a simple event bus that can consumer/emit events and dispatch event listener callbacks.  
+`BehaviorEvent` extends [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent), both work just like the normal DOM event system.
+
+```javascript
+
+window.BehaviorBus = new WindowBehaviorBus();
+window.BehaviorBus.attachBehaviors(window.BEHAVIORS);
+window.BehaviorBus.attachContext(window);
+
+// example: listen for all events on the BehaviorBus and log them to console
+window.BehaviorBus.addEventListener('*', (event, BehaviorBus, window) => {
+    console.log(`[window] -> [LOG] : ${JSON.stringify(event)}`);
+}, {behavior_name: 'WindowBehaviorBus'});
+
+// example: listen for PAGE_LOAD event, look for URLs on the page, and emit a DISCOVERED_URL event for each
+window.BehaviorBus.addEventListener('PAGE_LOAD', async (event, BehaviorBus, window) => {
+    for (const elem of window.document.querySelector('a[href]')) {
+        BehaviorBus.dispatch({type: 'DISCOVERED_OUTLINK', url: elem.href})
+    }
+})
+
+// example: dispatch an event to the event bus immediately
+window.BehaviorBus.dispatch({type: 'PAGE_LOAD', url: window.location.href})
+
+// OR for stricter validation you can pass a new BehaviorEvent(type, {...detail}) instead:
+window.BehaviorBus.dispatch(new BehaviorEvent('PAGE_LOAD', {url: window.location.href}))
+
+// these methods are all the same, they are just aliases of each other
+BehaviorBus.dispatch(event) == BehaviorBus.dispatchEvent(event) == BehaviorBus.emit(event)
+BehaviorBus.addEventListener(event_name, handler, options) == BehaviorBus.on(event_name, handler, options)
+```
+See `src/event_bus.js` for the full implementation.
