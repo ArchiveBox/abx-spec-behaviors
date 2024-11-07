@@ -73,6 +73,12 @@ class ExtractArticleText {
 }
 ```
 
+To see more example behaviors, check out:
+
+- `src/example_behaviors.js`
+
+### Behavior Usage
+
 `Behaviors` are used as part of a crawl process implemented by a `Behavior Driver`:
 ```javascript
 await crawlInBrowser('https://example.com', [ExtractArticleText, DiscoverOutlinks])
@@ -80,11 +86,11 @@ await crawlInBrowser('https://example.com', [ExtractArticleText, DiscoverOutlink
 await crawlInPuppeteer('https://example.com', [ExtractArticleText, DiscoverOutlinks])
 ```
 
-To see more example behaviors, check out:
-
-- `src/example_behaviors.js`
+<br/>
 
 ---
+
+<br/>
 
 ## Example Behavior Driver
 
@@ -193,7 +199,11 @@ $ node ./example_puppeteer_driver.js
 [window] -> [LOG] : {"type":"PAGE_CAPTURE_COMPLETE","metadata":{"id":"c5bed695-db37-43b2-8bc5-eab058642c75","timestamp":1730956451353,"path":["PuppeteerCrawlDriver","PuppeteerBehaviorBus","PuppeteerBusToWindowBusForwarder","WindowBehaviorBus"]},"url":"https://example.com"}
 ```
 
+<br/>
+
 ---
+
+<br/>
 
 ## BehaviorBus Implementation
 
@@ -210,26 +220,29 @@ window.BehaviorBus.attachBehaviors(window.BEHAVIORS);
 
 // tell the BehaviorBus what context it should pass to event listeners
 window.BehaviorBus.attachContext(window);
+```
 
-
+```javascript
 // example: listen for PAGE_LOAD event, look for URLs on the page, and emit a DISCOVERED_URL event for each
 window.BehaviorBus.addEventListener('PAGE_LOAD', async (event, BehaviorBus, window) => {
     for (const elem of window.document.querySelector('a[href]')) {
         BehaviorBus.dispatch({type: 'DISCOVERED_OUTLINK', url: elem.href})
     }
 })
-
+```
+```javascript
 // example: listen for *all* events on the BehaviorBus and log them to console
 window.BehaviorBus.addEventListener('*', (event, BehaviorBus, window) => {
     console.log(`[window] -> [LOG] : ${JSON.stringify(event)}`);
 }, {behavior_name: 'WindowBehaviorBus'});
-
-
+```
+```javascript
 // example: dispatch an event to the event bus immediately
 window.BehaviorBus.dispatch({type: 'PAGE_LOAD', url: window.location.href})
 //   OR equivalent:
 window.BehaviorBus.dispatch(new BehaviorEvent('PAGE_LOAD', {url: window.location.href}))
-
+```
+```javascript
 // these methods are all the same, they are just aliases of each other
 BehaviorBus.dispatch(event) == BehaviorBus.dispatchEvent(event) == BehaviorBus.emit(event)
 BehaviorBus.addEventListener(event_name, handler, options) == BehaviorBus.on(event_name, handler, options)
@@ -258,7 +271,8 @@ await page.evaluate(() => {
         }
     }, {behavior_name: 'WindowBusToPuppeteerBusForwarder'});
 });
-
+```
+```javascript
 // set up forwarding from PuppeteerBehaviorBus -> WindowBehaviorBus
 PuppeteerBehaviorBus.addEventListener('*', (event) => {
     event = new BehaviorEvent(event);
