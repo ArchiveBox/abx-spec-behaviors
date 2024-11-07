@@ -232,7 +232,7 @@ BehaviorBus.on('*', (event, BehaviorBus, window) => {
 }, {behavior_name: BehaviorBus.name});
 ```
 
-### `behaviorBus` Usage
+### `BehaviorBus` Usage
 
 A new `BehaviorBus` is set up for each context as soon as page loading starts.
 ```javascript
@@ -257,7 +257,7 @@ See `src/event_bus.js` for the full implementation.
 
 <br/>
 
-#### How `BehaviorBus` instances get connected
+### How `BehaviorBus` instances get connected
 
 `BehaviorBus` instances are typically linked together so that events emitted by one get sent to all the others.  
   
