@@ -127,7 +127,7 @@ await crawlInPuppeteer('https://example.com', [ExtractArticleText, DiscoverOutli
 
 ## `BehaviorBus`
 
-`BehaviorBus` extends [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) and is a simple event bus that can consumer/emit events and dispatch event listener callbacks.  
+`BehaviorBus` extends [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) and is a simple event bus that can consume/emit events + dispatch event listener callbacks.  
 `BehaviorEvent` extends [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent), both are based on the normal DOM event system / standard types and require no extra libraries.
 
 Event listeners attached by `BehaviorBus.attachBehaviors([...])` look like this:
