@@ -305,6 +305,9 @@ const BrowserCrawlDriver = {
             DISCOVERED_TEXT: async (event, BehaviorBus, page) => {
                 BrowserCrawlDriver.state.output_texts.push(event.text);
             },
+            // DISCOVERED_MEDIA: async (event, BehaviorBus, page) => {
+            //     BehaviorBus.emit({type: 'CALL_EXTERNAL_TOOL', bin: 'yt-dlp', cmd: ['yt-dlp', event.url]})
+            // })
         },
     },
 }
