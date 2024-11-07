@@ -121,7 +121,7 @@ BehaviorBus.on('*', (event, BehaviorBus, window) => {
 
 ### `BehaviorBus` Usage
 
-A new `BehaviorBus` is set up for each context as soon as page loading starts.
+A new `BehaviorBus` is set up for each context by the `BehaviorDriver` as soon as page loading starts.
 ```javascript
 window.location.href = 'https://example.com'
 window.BehaviorBus = new WindowBehaviorBus(window.BEHAVIORS, window);
