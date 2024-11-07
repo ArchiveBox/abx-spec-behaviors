@@ -142,15 +142,16 @@ See `src/event_bus.js` for the full implementation.
 
 ### How `BehaviorBus` instances get connected
 
-`BehaviorBus` instances are typically linked together so that events emitted by one get sent to all the others.  
+<details><summary><code>BehaviorBus</code> instances are typically linked together so that events emitted by one get sent to all the others.</summary>
+
+<br/>
   
 Drivers set this up before a page is first loaded so that behavior code running in any context can coordinate
-across all the contexts available to the driver. e.g. a behavior hook running inside a page on `WindowBehaviorBus` can
-emit an event that triggers a hook it defined on the `PuppeteerBehaviorBus`. This means `BehaviorEvent`s will "jailbreak"
+across all the contexts available to the driver. e.g. a behavior hook running inside a page on <code>WindowBehaviorBus</code> can
+emit an event that triggers a hook it defined on the <code>PuppeteerBehaviorBus</code>. This means <code>BehaviorEvent</code>s will "jailbreak"
 out of a page's typically isolated context and propagate up to a parent puppeteer context, and vice versa.
 
-```javascript
-// set up forwarding from WindowBehaviorBus -> PuppeteerBehaviorBus
+<pre lang="javascript><code>// set up forwarding from WindowBehaviorBus -> PuppeteerBehaviorBus
 await page.exposeFunction('dispatchEventToPuppeteerBus', (event) => PuppeteerBehaviorBus.emit(event));
 await page.evaluate(() => {
     window.BehaviorBus.addEventListener('*', (event) => {
@@ -161,9 +162,8 @@ await page.evaluate(() => {
         }
     }, {behavior_name: 'WindowBusToPuppeteerBusForwarder'});
 });
-```
-```javascript
-// set up forwarding from PuppeteerBehaviorBus -> WindowBehaviorBus
+</code></pre>
+<pre lang="javascript><code>// set up forwarding from PuppeteerBehaviorBus -> WindowBehaviorBus
 PuppeteerBehaviorBus.addEventListener('*', (event) => {
     event = new BehaviorEvent(event);
 
@@ -176,12 +176,16 @@ PuppeteerBehaviorBus.addEventListener('*', (event) => {
         }, JSON.stringify(event.detail));
     }
 }, {behavior_name: 'PuppeteerBusToWindowBusForwarder'});
-```
+</code></pre>
 
 For the full linking code, see here:
 
-- [`src/example_puppeteer_driver.js: linkPuppeteerBusToWindowBus(...)`](https://github.com/ArchiveBox/behaviors-spec/blob/main/src/example_puppeteer_driver.js)
-- [`src/example_puppeteer_driver.js: linkPuppeteerBusToServiceWorkerBus(...)`](https://github.com/ArchiveBox/behaviors-spec/blob/main/src/example_puppeteer_driver.js)
+<ul>
+<li><a href="https://github.com/ArchiveBox/behaviors-spec/blob/main/src/example_puppeteer_driver.js"><code>src/example_puppeteer_driver.js: linkPuppeteerBusToWindowBus(...)</code></a></li>
+<li><a href="https://github.com/ArchiveBox/behaviors-spec/blob/main/src/example_puppeteer_driver.js"><code>src/example_puppeteer_driver.js: linkPuppeteerBusToServiceWorkerBus(...)</code></a></li>
+</ul>
+
+</details>
 
 <br/>
 
