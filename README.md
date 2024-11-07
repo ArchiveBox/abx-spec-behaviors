@@ -46,6 +46,7 @@ We're aiming to foster easier collaboration of browser automation snippets like 
 - https://linkwarden.app
 - https://github.com/gildas-lormeau/singlefile
 - https://github.com/bellingcat/auto-archiver
+- https://www.anthropic.com/news/developing-computer-use and other AI tool use / function calling systems
 
 #### Industry
 - https://reset.tech
