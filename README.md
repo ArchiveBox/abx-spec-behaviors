@@ -22,7 +22,7 @@ Designed to allow expending a puppeteer or browser-based workflow with custom JS
 git clone https://github.com/ArchiveBox/behaviors-spec
 cd behaviors-spec
 
-npm install puppeteer   // needed only to run the examples, not needed for spec
+npm install puppeteer   # only needed for puppeteer example
 cd src/
 node example_puppeteer_driver.js
 ```
