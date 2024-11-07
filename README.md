@@ -135,15 +135,16 @@ linked PuppeteerBehaviorBus() <-> WindowBehaviorBus()
 `BehaviorEvent` extends [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent), both work just like the normal DOM event system.
 
 ```javascript
-
+window.location.href = 'https://example.com'
+// init the BehaviorBus() immediately after navigation occurs
 window.BehaviorBus = new WindowBehaviorBus();
+
+// attach all the event listeners from the behaviors
 window.BehaviorBus.attachBehaviors(window.BEHAVIORS);
+
+// tell the BehaviorBus what context it should pass to event listeners
 window.BehaviorBus.attachContext(window);
 
-// example: listen for all events on the BehaviorBus and log them to console
-window.BehaviorBus.addEventListener('*', (event, BehaviorBus, window) => {
-    console.log(`[window] -> [LOG] : ${JSON.stringify(event)}`);
-}, {behavior_name: 'WindowBehaviorBus'});
 
 // example: listen for PAGE_LOAD event, look for URLs on the page, and emit a DISCOVERED_URL event for each
 window.BehaviorBus.addEventListener('PAGE_LOAD', async (event, BehaviorBus, window) => {
@@ -152,10 +153,15 @@ window.BehaviorBus.addEventListener('PAGE_LOAD', async (event, BehaviorBus, wind
     }
 })
 
+// example: listen for *all* events on the BehaviorBus and log them to console
+window.BehaviorBus.addEventListener('*', (event, BehaviorBus, window) => {
+    console.log(`[window] -> [LOG] : ${JSON.stringify(event)}`);
+}, {behavior_name: 'WindowBehaviorBus'});
+
+
 // example: dispatch an event to the event bus immediately
 window.BehaviorBus.dispatch({type: 'PAGE_LOAD', url: window.location.href})
-
-// OR for stricter validation you can pass a new BehaviorEvent(type, {...detail}) instead:
+//   OR equivalent:
 window.BehaviorBus.dispatch(new BehaviorEvent('PAGE_LOAD', {url: window.location.href}))
 
 // these methods are all the same, they are just aliases of each other
