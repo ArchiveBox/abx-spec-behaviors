@@ -12,7 +12,7 @@ BehaviorBus.on('DISCOVERED_OUTLINK',  async ({url}, BehaviorBus, window) => ... 
 BehaviorBus.on('DISCOVERED_VIDEO',  async ({url}, BehaviorBus, window) => ... download with yt-dlp ...)
 ```
 
-It's one step up from TamperMonkey, with the ability to define hook for puppeteer lifecycle events, service worker / extension events, and other contexts beyond `window`.
+It's one step up from TamperMonkey, with the ability to define event listeners for `window` events, puppeteer lifecycle events, service worker / browser extension events, and other events implemented by `CrawlDriver`s.
 
 **Key Concepts:**
 
