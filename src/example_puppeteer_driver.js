@@ -4,7 +4,7 @@
 import puppeteer from 'puppeteer';
 import fs from 'node:fs';
 
-import { BehaviorEvent, PuppeteerBehaviorBus } from './behavior_bus.js';
+import { BehaviorEvent, PuppeteerBehaviorBus } from './behaviors.js';
 import { BEHAVIORS } from './example_behaviors.js';
 
 process.chdir(import.meta.dirname);
@@ -14,7 +14,7 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const linkPuppeteerBusToWindowBus = async (PuppeteerBehaviorBus, page) => {
     // add the behavior bus code & behaviors code to the page
-    const behavior_bus_js = fs.readFileSync(`./abx_behavior_spec.js`, 'utf8').split('\nexport {')[0];
+    const behavior_bus_js = fs.readFileSync(`./behaviors.js`, 'utf8').split('\nexport {')[0];
     await page.evaluate(behavior_bus_js);
     const behaviors_js = fs.readFileSync(`./example_behaviors.js`, 'utf8').split('\nexport {')[0];
     await page.evaluate(behaviors_js);
@@ -74,7 +74,7 @@ const linkPuppeteerBusToServiceWorkerBus = async (PuppeteerBehaviorBus, browser,
     });
 
     // add the behavior bus code & behaviors code to the page
-    const behavior_bus_js = fs.readFileSync(`./abx_behavior_spec.js`, 'utf8').split('\nexport {')[0];
+    const behavior_bus_js = fs.readFileSync(`./behaviors.js`, 'utf8').split('\nexport {')[0];
     await service_worker.evaluate(behavior_bus_js);    
     const behaviors_js = fs.readFileSync(`./example_behaviors.js`, 'utf8').split('\nexport {')[0];
     await service_worker.evaluate(behaviors_js);
