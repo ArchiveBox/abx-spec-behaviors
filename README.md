@@ -55,6 +55,10 @@ const DiscoverOutlinksBehavior = {
      // serviceworker: ...
     },
 }
+
+await crawlInBrowser('https://example.com', [DiscoverOutlinksBehavior])
+// OR
+await crawlInPuppeteer('https://example.com', [DiscoverOutlinksBehavior])
 ```
 
 To see more example behaviors, check out:
