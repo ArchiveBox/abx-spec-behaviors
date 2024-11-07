@@ -23,7 +23,7 @@ It's one step up from TamperMonkey, with the ability to define event listeners f
 - [`BehaviorEvent`](#behaviorevent): an event `{type: 'PAGE_LOAD', url}` that goes through a `BehaviorBus`
 - [`BehaviorDriver`](#behaviordriver): navigates to URLs, sets up `BehaviorBus` instances for browser/puppeteer/extensions, registers all the `Behavior` event listeners, and fires main crawl lifecycle events 
 
-**Dependencies:** *None*, relies only on JS standard library `EventTarget` which is native in both browser and Node.
+**Dependencies:** *None*, relies only on JS standard library `EventTarget` which is native in both browser and Node. Spec implementation is short and easy to read, < 500 lines total.
 
 ## Goals
 
