@@ -27,12 +27,13 @@ node example_puppeteer_driver.js
 ## Example Behavior
 
 ```javascript
-// example: find all the <a href>s on the page and add them to the crawl queue
-const DiscoverOutlinksBehavior = {
-    name: 'DiscoverOutlinksBehavior',
+const DiscoverOutlinks = {
+    name: 'DiscoverOutlinks',
     schema: 'BehaviorSchema@0.1.0',
+    description: 'Find all the outgoing <a href> and <iframe> URLs on the page',
+    documentation: 'https://github.com/ArchiveBox/behaviors-spec#example-behavior',
 
-    extractOutlinks: (elem) => {
+    findOutlinkURLs: (elem) => {
         return [...elem.querySelectorAll('a[href], iframe[src]')].map(a => a.href || a.src),
     },
 
@@ -42,7 +43,7 @@ const DiscoverOutlinksBehavior = {
             // PAGE_LOAD: ...
 
             PAGE_CAPTURE: async (event, BehaviorBus, window) => {
-                for (const url of DiscoverOutlinksBehavior.extractOutlinks(window.document.body)) {
+                for (const url of DiscoverOutlinks.findOutlinkURLs(window.document.body)) {
                     BehaviorBus.emit({type: 'DISCOVERED_OUTLINK', url})
                     BehaviorBus.emit({type: 'FS_WRITE_FILE', path: 'outlinks.txt', mode: 'append', content: url + '\n'})
                 }
@@ -56,9 +57,9 @@ const DiscoverOutlinksBehavior = {
     },
 }
 
-await crawlInBrowser('https://example.com', [DiscoverOutlinksBehavior])
+await crawlInBrowser('https://example.com', [DiscoverOutlinks])
 // OR
-await crawlInPuppeteer('https://example.com', [DiscoverOutlinksBehavior])
+await crawlInPuppeteer('https://example.com', [DiscoverOutlinks])
 ```
 
 To see more example behaviors, check out:
