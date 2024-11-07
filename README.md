@@ -109,7 +109,7 @@ Event listeners attached by `BehaviorBus.attachBehaviors([...])` look like this:
 // example: listen for PAGE_LOAD event, look for URLs on the page, and emit a DISCOVERED_URL event for each
 BehaviorBus.on('PAGE_LOAD', async (event, BehaviorBus, window) => {
     for (const elem of window.document.querySelector('a[href]')) {
-        BehaviorBus.dispatch({type: 'DISCOVERED_OUTLINK', url: elem.href})
+        BehaviorBus.emit({type: 'DISCOVERED_OUTLINK', url: elem.href})
     }
 })
 ```
@@ -151,7 +151,7 @@ out of a page's typically isolated context and propagate up to a parent puppetee
 
 ```javascript
 // set up forwarding from WindowBehaviorBus -> PuppeteerBehaviorBus
-await page.exposeFunction('dispatchEventToPuppeteerBus', (event) => PuppeteerBehaviorBus.dispatchEvent(event));
+await page.exposeFunction('dispatchEventToPuppeteerBus', (event) => PuppeteerBehaviorBus.emit(event));
 await page.evaluate(() => {
     window.BehaviorBus.addEventListener('*', (event) => {
         // if the event didn't come from the PuppeteerBehaviorBus already, forward it to them
@@ -172,7 +172,7 @@ PuppeteerBehaviorBus.addEventListener('*', (event) => {
         console.log(`[puppeteer] -> [window]: ${JSON.stringify(event.detail)}`);
         page.evaluate((event) => {
             event = new BehaviorEvent(JSON.parse(event));
-            window.BehaviorBus.dispatchEvent(event);
+            window.BehaviorBus.emit(event);
         }, JSON.stringify(event.detail));
     }
 }, {behavior_name: 'PuppeteerBusToWindowBusForwarder'});
