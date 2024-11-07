@@ -92,6 +92,52 @@ To see how Behaviors would be run by different tools, check out the example driv
 - `src/example_archivebox_driver.js`
 
 ```javascript
+const BrowserCrawlDriver = {
+    name: 'BrowserCrawlDriver',
+    schema: 'BehaviorDriverSchema@0.1.0',
+
+    state: {
+        output_files: [],
+        output_urls: [],
+        output_texts: [],
+    },
+
+    hooks: {
+        browser: {
+            FS_WRITE_FILE: async (event, BehaviorBus, page) => {
+                const opfsRoot = await window.navigator.storage.getDirectory();
+                const fileHandle = await opfsRoot.getFileHandle("fast", { create: true });
+                const accessHandle = await fileHandle.createSyncAccessHandle();
+                accessHandle.write(content); accessHandle.flush(); accessHandle.close();
+                BrowserCrawlDriver.state.output_files.push({path, accessHandle});
+            },
+            DISCOVERED_OUTLINK: async (event, BehaviorBus, page) => {
+                BrowserCrawlDriver.state.output_urls.push(event.url);
+            },
+            DISCOVERED_TEXT: async (event, BehaviorBus, page) => {
+                BrowserCrawlDriver.state.output_texts.push(event.text);
+            },
+        },
+    },
+}
+```
+
+Drivers are just like Behaviors, they just expose some event listeners that other behaviors can use.
+
+```javascript
+window.location.href = 'https://example.com'
+
+
+// driver is initialized right after navigation starts, before page is loaded
+const BehaviorBus = new WindowBehaviorBus([BrowserCrawlDriver, ...window.BEHAVIORS], window);
+
+// you can test the driver implementation by firing one of the events it handles
+BehaviorBus.emit({type: 'FS_WRITE_FILE', path: 'text.txt', content: 'testing writing to filesystsem using drivers FS_WRITE_FILE implementation'})
+```
+
+### Behavior Driver Output
+
+```javascript
 $ cd src/
 $ node ./example_puppeteer_driver.js
 // loading src/behavior_bus.js
