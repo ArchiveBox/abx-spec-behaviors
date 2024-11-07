@@ -7,9 +7,9 @@ Designed to allow expending a puppeteer or browser-based workflow with custom JS
 
 **Key Concepts:**
 
-- `Behavior`: a plugin that defines some event listener hook methods
-- `BehaviorBus`: an event bus that lets you register event listener methods + dispatch `BehaviorEvent`s
-- `BehaviorDriver`: sets up a `BehaviorBus` for browser/puppeteer/extensions, registers `Behavior` hooks, and fires all the main lifecycle events 
+- [`Behavior`](#example-behavior): a plugin that defines some event listener hook methods
+- [`BehaviorBus`](#behaviorbus-implementation): an event bus that lets you register event listener methods + dispatch `BehaviorEvent`s
+- [`Behavior Driver`](#example-behavior-driver): sets up a `BehaviorBus` for browser/puppeteer/extensions, registers `Behavior` hooks, and fires all the main lifecycle events 
 
 ## Quickstart
 
