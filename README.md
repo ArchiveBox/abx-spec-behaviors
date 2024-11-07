@@ -16,6 +16,32 @@ Designed to allow expending a puppeteer or browser-based workflow with custom JS
 
 **Dependencies:** *None*, relies only on JS standard library `EventTarget` which is native in both browser and Node.
 
+## Goals
+
+To create an inter-operable spec for plugins that many scraper and digital archiving projects can share. Aiming for collaboration between:
+
+- https://ArchiveBox.io
+- https://webrecorder.net (https://github.com/webrecorder/browsertrix-behaviors)
+- https://archive.org
+- https://conifer.rhizome.org
+- https://www.starlinglab.org
+- https://reset.tech
+- https://linkwarden.app
+- https://github.com/gildas-lormeau/singlefile
+- Want to collaborate on it? [Come join the discussion](https://zulip.archivebox.io)
+
+No one wants to maintain all the little user scripts needed for crawling on their own. Here are some examples of things that could be implemented as behaviors and shared between these tools:
+
+- `scroll down to load infiniscroll content`
+- `expand/unroll reddit/twitter comment threads automatically`
+- `auto-solve CAPTCHAs`
+- `log into a site using some saved credentils`
+- `dismiss modals / cookie consent popups / privacy policies`
+- `block ads requests / remove ads elements from page`
+- `extract youtube videos/audio/subtitles to mp4/mp3/sub files`
+- and more...
+
+
 ## Quickstart
 
 ```bash
@@ -352,31 +378,7 @@ $ node ./example_puppeteer_driver.js
 
 ---
 
-## Goals
-
-To create an inter-operable spec for plugins that many scraper and digital archiving projects can share. Aiming for collaboration between:
-
-- https://ArchiveBox.io
-- https://webrecorder.net (https://github.com/webrecorder/browsertrix-behaviors)
-- https://archive.org
-- https://conifer.rhizome.org
-- https://www.starlinglab.org
-- https://reset.tech
-- https://linkwarden.app
-- https://github.com/gildas-lormeau/singlefile
-- Want to collaborate on it? [Come join the discussion](https://zulip.archivebox.io)
-
-No one wants to maintain all the little user scripts needed for crawling on their own. Here are some examples of things that could be implemented as behaviors and shared between these tools:
-
-- scroll down to load infiniscroll content
-- expand/unroll reddit/twitter comment threads automatically
-- auto-solve CAPTCHAs
-- log into a site using some saved credentils
-- dismiss modals / cookie consent popups / privacy policies
-- block ads requests / remove ads elements from page
-- extract youtube videos/audio/subtitles to mp4/mp3/sub files
-- and more
-
+<br/>
 
 ## Further Reading
 
