@@ -79,6 +79,17 @@ node src/example_puppeteer_driver.js
 
 ## `Behavior`
 
+### `Behavior` Usage
+
+`Behaviors` are used as part of a crawl process implemented by a [`BehaviorDriver`](#behaviordriver):
+```javascript
+await crawlInBrowser('https://example.com', [ExtractArticleText, DiscoverOutlinks])
+// OR
+await crawlInPuppeteer('https://example.com', [ExtractArticleText, DiscoverOutlinks])
+```
+
+### `Behavior` Examples
+
 ```javascript
 class ExtractArticleText {
     name: 'ExtractArticleText',
@@ -132,16 +143,6 @@ const DiscoverOutlinks = {
 
 To see more example behaviors, check out: [`src/example_behaviors.js`](https://github.com/ArchiveBox/behaviors-spec/blob/main/src/example_behaviors.js).
 
-<br/>
-
-### `Behavior` Usage
-
-`Behaviors` are used as part of a crawl process implemented by a [`BehaviorDriver`](#behaviordriver):
-```javascript
-await crawlInBrowser('https://example.com', [ExtractArticleText, DiscoverOutlinks])
-// OR
-await crawlInPuppeteer('https://example.com', [ExtractArticleText, DiscoverOutlinks])
-```
 
 <br/>
 
