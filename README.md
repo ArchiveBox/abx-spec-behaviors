@@ -88,6 +88,8 @@ To see how Behaviors would be run by different tools, check out the example driv
 
 - `src/example_puppeteer_driver.js`
 - `src/example_browser_driver.js`
+- `src/example_browsertrix_driver.js`
+- `src/example_archivebox_driver.js`
 
 ```javascript
 $ cd src/
