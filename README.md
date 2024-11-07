@@ -82,7 +82,7 @@ To see more example behaviors, check out: `src/example_behaviors.js`.
 
 ### `Behavior` Usage
 
-`Behaviors` are used as part of a crawl process implemented by a `Behavior Driver`:
+`Behaviors` are used as part of a crawl process implemented by a [`BehaviorDriver`](#behaviordriver):
 ```javascript
 await crawlInBrowser('https://example.com', [ExtractArticleText, DiscoverOutlinks])
 // OR
@@ -100,7 +100,7 @@ await crawlInPuppeteer('https://example.com', [ExtractArticleText, DiscoverOutli
 ## `BehaviorBus`
 
 `BehaviorBus` extends [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) and is a simple event bus that can consumer/emit events and dispatch event listener callbacks.  
-`BehaviorEvent` extends [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent), both work just like the normal DOM event system.
+`BehaviorEvent` extends [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent), both are based on the normal DOM event system / standard types and require no extra libraries.
 
 Event listeners attached by `BehaviorBus.attachBehaviors([...])` look like this:
 ```javascript
@@ -189,24 +189,26 @@ For the full linking code, see here:
 
 ## `BehaviorEvent`
 
-```javascript
-const event = {
-    type: 'PAGE_LOAD',         // required
-    metadata: {                // added automatically by BehaviorBus
-        id: uuid4(),
-        timestamp: Date.now(),
-        path: ['PuppeteerBehaviorBus', 'WindowBehaviorBus'],
-    }
-    ...detail,                 // any extra data you want to include
-}
-```
-This is also equivalent, and provides some nice validation/type checking:
+`BehaviorEvent` extends [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent) which is the standard `Event` type that browsers use for all DOM events.
+
 ```javascript
 const event = new BehaviorEvent(
     'PAGE_LOAD',
     {url},
     {path: ['PuppeteerBehaviorBus']},
 )
+
+console.log(event.detail)
+{
+    type: 'PAGE_LOAD',         // must be all-caps [A-Z_]+
+    metadata: {                // added automatically by BehaviorBus
+        id: uuid4(),
+        timestamp: Date.now(),
+        path: ['PuppeteerBehaviorBus', 'WindowBehaviorBus'],
+    }
+    ...detail,                 // any extra data you include e.g. {url}
+}
+```
 ```
 
 ### `BehaviorEvent` Usage
