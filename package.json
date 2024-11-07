@@ -1,0 +1,28 @@
+{
+  "name": "behaviors-spec",
+  "version": "0.1.0",
+  "description": "Shared behaviors spec for puppeteer and browser scripts",
+  "keywords": [
+    "puppeteer",
+    "userscripts",
+    "browser",
+    "headless"
+  ],
+  "author": "Nick Sweeting",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ArchiveBox/behaviors-spec/issues"
+  },
+  "homepage": "https://github.com/ArchiveBox/behaviors-spec#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArchiveBox/behaviors-spec.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "main": "src/example_puppeteer_driver.js",
+  "dependencies": {
+    "puppeteer": "^23.7.0"
+  }
+}

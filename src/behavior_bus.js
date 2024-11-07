@@ -237,11 +237,20 @@ const initServiceWorkerBehaviorBus = (behaviors) => {
     return BehaviorBus;
 }
 
+var all_exports = { BehaviorEvent, WindowBehaviorBus, PuppeteerBehaviorBus, ServiceWorkerBehaviorBus, initWindowBehaviorBus, initServiceWorkerBehaviorBus }
+
 if (globalThis.navigator) {
-    var all_exports = { BehaviorEvent, WindowBehaviorBus, PuppeteerBehaviorBus, ServiceWorkerBehaviorBus, initWindowBehaviorBus, initServiceWorkerBehaviorBus }
+    // loaded from browser, running in window
+    console.log(`[window] importing src/behavior_bus.js ...`);
     for (const key of Object.keys(all_exports)) {
-        console.log(`Registering window.${key} = ...`)
         globalThis[key] = all_exports[key];
+        console.log(`[window] loaded window.${key}`);
+    }
+} else {
+    // loaded from node, running in puppeteer
+    console.log(`[puppeteer] importing src/behavior_bus.js ...`);
+    for (const key of Object.keys(all_exports)) {
+        console.log(`[puppeteer] loaded global.${key}`);
     }
 }
 

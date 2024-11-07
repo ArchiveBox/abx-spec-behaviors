@@ -116,12 +116,20 @@ const ExpandCommentsBehavior = {
 }
 
 const BEHAVIORS = [DiscoverOutlinksBehavior, ExtractArticleTextBehavior, ExpandCommentsBehavior]
+var all_exports = { DiscoverOutlinksBehavior, ExtractArticleTextBehavior, ExpandCommentsBehavior, BEHAVIORS }
 
 if (globalThis.navigator) {
-    var all_exports = { BEHAVIORS, DiscoverOutlinksBehavior, ExtractArticleTextBehavior, ExpandCommentsBehavior }
+    // loaded from browser, running in window
+    console.log(`[window] importing src/example_behaviors.js ...`);
     for (const key of Object.keys(all_exports)) {
-        console.log(`Registering window.${key} = ...`)
+        console.log(`[window] loaded window.${key}`);
         globalThis[key] = all_exports[key];
+    }
+} else {
+    // loaded from node, running in puppeteer
+    console.log(`[puppeteer] importing src/example_behaviors.js ...`);
+    for (const key of Object.keys(all_exports)) {
+        console.log(`[puppeteer] loaded global.${key}`);
     }
 }
 
