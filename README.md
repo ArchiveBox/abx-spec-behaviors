@@ -33,6 +33,7 @@ Here are some examples of things that could be implemented as behaviors and shar
 - `block ads requests / remove ads elements from page`
 - `extract youtube videos/audio/subtitles to mp4/mp3/sub files`
 - `export discovered outlink URLs to a Google Sheet`
+- `send some page content to an LLM with a prompt and store the response`
 - and more...
 
 We're aiming to foster easier collaboration of browser automation snippets like these between:
