@@ -180,15 +180,15 @@ class BaseBehaviorBus extends EventTarget {
     }
 
     // aliases
-    // on(type, handler) {
-    //     this.addEventListener(type, handler);
-    // }
-    // emit(event) {
-    //     this.dispatchEvent(event);
-    // }
-    // dispatch(event) {
-    //     this.dispatchEvent(event);
-    // }
+    on(type, handler) {
+        this.addEventListener(type, handler);
+    }
+    emit(event) {
+        this.dispatchEvent(event);
+    }
+    dispatch(event) {
+        this.dispatchEvent(event);
+    }
 }
 
 class WindowBehaviorBus extends BaseBehaviorBus {
