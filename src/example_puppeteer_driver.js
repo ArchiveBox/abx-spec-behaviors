@@ -116,6 +116,30 @@ const linkPuppeteerBusToServiceWorkerBus = async (PuppeteerBehaviorBus, browser,
 /*********************** Crawl Drivers ***********************/
 
 
+const PuppeteerCrawlDriver = {
+    name: 'PuppeteerCrawlDriver',
+    schema: 'BehaviorDriverSchema@0.1.0',
+
+    state: {
+        crawl_queue: [],
+    },
+
+    hooks: {
+        // events the driver cares about / listens for / implements for other behaviors
+        puppeteer: {
+            FS_WRITE_FILE: async (event, BehaviorBus, page) => {
+                const {path, content, mode='write', ...options} = event;
+                console.log(`[PuppeteerCrawlDriver] 🔧 Writing file to ${path}...`)
+                fs.writeFileSync(path, content, mode, ...options);
+            },
+            DISCOVERED_OUTLINK: async (event, BehaviorBus, page) => {
+                console.log(`[PuppeteerCrawlDriver] 🔍 Adding URL to crawl queue: ${event.url}`)
+                this.state.crawl_queue.push(event.url);
+            },
+        },
+    },
+}
+
 const crawlInPuppeteer = async (url, behaviors) => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -125,23 +149,23 @@ const crawlInPuppeteer = async (url, behaviors) => {
     BehaviorBus.addEventListener('*', (event) => {
         console.log()
         console.log(`[puppeteer] -> [LOG] : ${JSON.stringify(event)}`);
-    }, {behavior_name: 'PuppeteerCrawlDriver'});
+    }, {behavior_name: PuppeteerCrawlDriver.name});
 
     const navigationPromise = page.goto(url);
-    BehaviorBus.attachBehaviors(behaviors);
+    BehaviorBus.attachBehaviors([...PuppeteerCrawlDriver, ...behaviors]);
     BehaviorBus.attachContext(page);
     await navigationPromise;
 
     await linkPuppeteerBusToWindowBus(BehaviorBus, page);
     // await linkPuppeteerBusToServiceWorkerBus(BehaviorBus, browser, 'some-extension-id');
-    BehaviorBus.dispatchEvent(new BehaviorEvent('PAGE_SETUP', {url}, {path: ['PuppeteerCrawlDriver']}));
+    BehaviorBus.dispatchEvent(new BehaviorEvent('PAGE_SETUP', {url}, {path: [PuppeteerCrawlDriver.name]}));
 
     await page.waitForSelector('body');
-    BehaviorBus.dispatchEvent(new BehaviorEvent('PAGE_LOAD', {url}, {path: ['PuppeteerCrawlDriver']}));
+    BehaviorBus.dispatchEvent(new BehaviorEvent('PAGE_LOAD', {url}, {path: [PuppeteerCrawlDriver.name]}));
     await sleep(5000);
-    BehaviorBus.dispatchEvent(new BehaviorEvent('PAGE_CAPTURE', {url}, {path: ['PuppeteerCrawlDriver']}));
+    BehaviorBus.dispatchEvent(new BehaviorEvent('PAGE_CAPTURE', {url}, {path: [PuppeteerCrawlDriver.name]}));
     await sleep(5000);
-    BehaviorBus.dispatchEvent(new BehaviorEvent('PAGE_CAPTURE_COMPLETE', {url}, {path: ['PuppeteerCrawlDriver']}));
+    BehaviorBus.dispatchEvent(new BehaviorEvent('PAGE_CAPTURE_COMPLETE', {url}, {path: [PuppeteerCrawlDriver.name]}));
     await sleep(2000);
     
     // await page.close();

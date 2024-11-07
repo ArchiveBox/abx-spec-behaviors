@@ -97,7 +97,7 @@ class BaseBehaviorBus extends EventTarget {
     attachBehaviors(behaviors=[]) {   // e.g. WindowBehaviorBus.attachBehaviors([{hooks: {window: {PAGE_LOAD: (event, BehaviorBus, window) => {}}}}])
         this.behaviors = [...(this.behaviors || []), ...behaviors]
         for (const behavior of behaviors) {
-            const handlers_for_this_context = behavior.hooks[this.name] || {};
+            const handlers_for_this_context = behavior.hooks[this.name] ||  behavior.hooks[this.name.toLowerCase().replace('behaviorbus', '')] || {};
             for (const [eventName, handler] of Object.entries(handlers_for_this_context)) {
                 this.addEventListener(eventName, handler, {behavior_name: behavior.name || 'UNKNOWN_BEHAVIOR'});
             }
