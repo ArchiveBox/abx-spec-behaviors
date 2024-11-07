@@ -91,6 +91,9 @@ To see how Behaviors would be run by different tools, check out the example driv
 - `src/example_browsertrix_driver.js`
 - `src/example_archivebox_driver.js`
 
+Drivers are just like Behaviors in that they implement some event listeners.  
+Drivers are designed to implement the core events used by all the other behaviors as
+their "standard library" of utilities, e.g. filesystem IO, adding to crawl queue, etc...
 ```javascript
 const BrowserCrawlDriver = {
     name: 'BrowserCrawlDriver',
@@ -122,8 +125,7 @@ const BrowserCrawlDriver = {
 }
 ```
 
-Drivers are just like Behaviors, they just expose some event listeners that other behaviors can use.
-
+Here's how you can test a driver:
 ```javascript
 window.location.href = 'https://example.com'
 
