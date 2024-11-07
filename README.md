@@ -29,7 +29,10 @@ node example_puppeteer_driver.js
 ```javascript
 const DiscoverOutlinks = {
     name: 'DiscoverOutlinks',
+    version: '0.1.9',
     schema: 'BehaviorSchema@0.1.0',
+    license: 'MIT',
+    author: 'ArchiveBox',
     description: 'Find all the outgoing <a href> and <iframe> URLs on the page',
     documentation: 'https://github.com/ArchiveBox/behaviors-spec#example-behavior',
 
