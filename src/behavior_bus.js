@@ -33,7 +33,7 @@ function _validateBehaviorEvent(event) {
 
 // and it validates that events are objects containing a {type: 'EVENT_NAME'} key
 class BehaviorEvent extends CustomEvent {
-    // BehaviorEvent('PAGE_LOAD', event={url: 'https://example.com', ...detail}, metadata={id: '1234-...', path: ['page'], ...})
+    // BehaviorEvent('PAGE_LOAD', {url: 'https://example.com', ...detail}, {id: '1234-...', path: ['page'], ...})
     constructor(dispatch_type, event_object = {}, extra_metadata = {}) {
         if (typeof dispatch_type === 'object') {
             // if they called BehaviorEvent({type: 'PAGE_LOAD', url: 'https://example.com'}, {...})
@@ -62,14 +62,7 @@ class BehaviorEvent extends CustomEvent {
 
         // init CustomEvent(event_type, detail=event_detail)
         super(dispatch_type, {detail: event_detail});          // e.g. super('PAGE_LOAD', {type: 'PAGE_LOAD', metadata: {...}, ...detail})
-        
         _validateBehaviorEvent(this.detail);
-
-        // DEBUG ONLY: attach a reference to the global context on the event as a helpful pointer
-        // to the context it would recieve when handled by BehaviorBus handler
-        // doens't persist when event gets passed to a different context, is just a pointer to whatever the current local context is
-        // this.Context = globalThis;                // e.g. window ({document, BehaviorBus, ...}), page ({browser, page, BehaviorBus, ...}), serviceWorker ({window, BehaviorBus, ...}), etc.
-        // this.BehaviorBus = null;
     }
 }
 
@@ -77,8 +70,6 @@ class BehaviorEvent extends CustomEvent {
 class BaseBehaviorBus extends EventTarget {
     schema = 'BehaviorBusSchema@0.1.0';
 
-    // const broadcast = (event) => {PuppeteerBus_dispatch(event), ServiceWorkerBus_dispatch(event), WindowBus_dispatch(event)}
-    // const BehaviorBus = new WindowBehaviorBus('window', on_emit_event_listener=broadcast)
     constructor() {
         super();
         this.context = null;               // e.g. window={navigator, window, document, BehaviorBus, ...}, puppeteer={browser, page, BehaviorBus, ...}, serviceWorker={navigator, BehaviorBus, ...}
@@ -216,11 +207,6 @@ class ServiceWorkerBehaviorBus extends BaseBehaviorBus {
         window.BehaviorBus = this;
         this.attachBehaviors(behaviors);
         this.attachContext(window);
-        
-        // log all events to the console
-        this.addEventListener('*', (event, BehaviorBus, window) => {
-            console.log(`[serviceWorker] -> [LOG] : ${JSON.stringify(event)}`);
-        }, {behavior_name: this.name});
     
         // listen for chrome.runtime.onMessage events from content scripts
         window.chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -229,6 +215,10 @@ class ServiceWorkerBehaviorBus extends BaseBehaviorBus {
             }
         }, {behavior_name: this.name});
 
+        // log all events to the console
+        this.addEventListener('*', (event, BehaviorBus, window) => {
+            console.log(`[serviceWorker] -> [LOG] : ${JSON.stringify(event)}`);
+        }, {behavior_name: this.name});
         console.log(`[serviceWorker] initialized window.BehaviorBus = ServiceWorkerBehaviorBus()`);
     }
 }
@@ -242,6 +232,7 @@ class PuppeteerBehaviorBus extends BaseBehaviorBus {
         this.attachBehaviors(behaviors);
         this.attachContext(page);
 
+        // log all events to the console
         this.addEventListener('*', (event, BehaviorBus, page) => {
             console.log(`[puppeteer] -> [LOG] : ${JSON.stringify(event)}`);
         }, {behavior_name: this.name});
