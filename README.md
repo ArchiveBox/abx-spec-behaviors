@@ -23,8 +23,9 @@ node example_puppeteer_driver.js
 ```javascript
 // example: find all the <a href>s on the page and add them to the crawl queue
 const DiscoverOutlinksBehavior = {
-    schema: 'BehaviorSchema@0.1.0',
     name: 'DiscoverOutlinksBehavior',
+    schema: 'BehaviorSchema@0.1.0',
+    
     contexts: {
         WindowBehaviorBus: {
             PAGE_CAPTURE: async (event, BehaviorBus, window) => {
