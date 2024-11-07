@@ -151,6 +151,8 @@ const BehaviorBus = new WindowBehaviorBus([BrowserCrawlDriver, ...window.BEHAVIO
 BehaviorBus.emit({type: 'FS_WRITE_FILE', path: 'text.txt', content: 'testing writing to filesystsem using drivers FS_WRITE_FILE implementation'})
 ```
 
+### `BehaviorDriver` Example Output
+
 Here's the example output from a full puppeteer crawl run with all the example behaviors:
 ```javascript
 $ cd src/
