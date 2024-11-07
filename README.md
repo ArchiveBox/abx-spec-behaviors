@@ -27,6 +27,21 @@ node example_puppeteer_driver.js
 ## Example Behavior
 
 ```javascript
+class ExtractArticleText {
+    name: 'ExtractArticleText',
+    schema: 'BehaviorSchema@0.1.0',
+    hooks: {
+        window: {
+            PAGE_CAPTURE: async (event, BehaviorBus, window) => {
+                 const article_text = window.document.body.innerText
+                 BehaviorBus.emit({type: 'DISCOVERED_TEXT', selector: 'body', text: article_text})
+                 BehaviorBus.emit({type: 'FS_WRITE_FILE', path: 'article.txt', content: article_text})
+            },
+        },
+    },
+}
+```
+```javascript
 const DiscoverOutlinks = {
     name: 'DiscoverOutlinks',
     version: '0.1.9',
@@ -42,28 +57,13 @@ const DiscoverOutlinks = {
 
     hooks: {
         window: {
+            // PAGE_SETUP: ...
+            // PAGE_LOAD: ...
             PAGE_CAPTURE: async (event, BehaviorBus, window) => {
                 for (const url of DiscoverOutlinks.findOutlinkURLs(window.document.body)) {
                     BehaviorBus.emit({type: 'DISCOVERED_OUTLINK', url})
                     BehaviorBus.emit({type: 'FS_WRITE_FILE', path: 'outlinks.txt', mode: 'append', content: url + '\n'})
                 }
-            },
-        },
-    },
-}
-```
-```javascript
-class ExtractArticleText {
-    name: 'ExtractArticleText',
-    schema: 'BehaviorSchema@0.1.0',
-    hooks: {
-        window: {
-            // PAGE_SETUP: ...
-            // PAGE_LOAD: ...
-            PAGE_CAPTURE: async (event, BehaviorBus, window) => {
-                 const article_text = window.document.body.innerText
-                 BehaviorBus.emit({type: 'DISCOVERED_TEXT', selector: 'body', text: article_text})
-                 BehaviorBus.emit({type: 'FS_WRITE_FILE', path: 'article.txt', content: article_text})
             },
          // PAGE_CAPTURE_COMPLETE: ...
         },
@@ -73,9 +73,7 @@ class ExtractArticleText {
 }
 ```
 
-To see more example behaviors, check out:
-
-- `src/example_behaviors.js`
+To see more example behaviors, check out: `src/example_behaviors.js`.
 
 ### Behavior Usage
 
@@ -93,14 +91,6 @@ await crawlInPuppeteer('https://example.com', [ExtractArticleText, DiscoverOutli
 <br/>
 
 ## Example Behavior Driver
-
-
-To see how Behaviors would be run by different tools, check out the example drivers:
-
-- `src/example_puppeteer_driver.js`
-- `src/example_browser_driver.js`
-- `src/example_browsertrix_driver.js`
-- `src/example_archivebox_driver.js`
 
 Drivers are just like Behaviors in that they implement some event listeners.  
 Drivers are designed to implement the core events used by all the other behaviors as
@@ -136,6 +126,16 @@ const BrowserCrawlDriver = {
 }
 ```
 
+
+To see how Behaviors would be run by different tools, check out the example drivers:
+
+- `src/example_puppeteer_driver.js`
+- `src/example_browser_driver.js`
+- `src/example_browsertrix_driver.js`
+- `src/example_archivebox_driver.js`
+
+### Behavior Driver Usage
+
 Here's how you can test a driver:
 ```javascript
 window.location.href = 'https://example.com'
@@ -147,8 +147,7 @@ const BehaviorBus = new WindowBehaviorBus([BrowserCrawlDriver, ...window.BEHAVIO
 BehaviorBus.emit({type: 'FS_WRITE_FILE', path: 'text.txt', content: 'testing writing to filesystsem using drivers FS_WRITE_FILE implementation'})
 ```
 
-### Behavior Driver Output
-
+Here's the example output from a full puppeteer crawl run with all the example behaviors:
 ```javascript
 $ cd src/
 $ node ./example_puppeteer_driver.js
@@ -210,21 +209,16 @@ $ node ./example_puppeteer_driver.js
 `BehaviorBus` extends [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) and is a simple event bus that can consumer/emit events and dispatch event listener callbacks.  
 `BehaviorEvent` extends [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent), both work just like the normal DOM event system.
 
+A new `BehaviorBus` is set up for each context as soon as page loading starts.
 ```javascript
 window.location.href = 'https://example.com'
-// init the BehaviorBus() immediately after navigation occurs
-window.BehaviorBus = new WindowBehaviorBus();
-
-// attach all the event listeners from the behaviors
-window.BehaviorBus.attachBehaviors(window.BEHAVIORS);
-
-// tell the BehaviorBus what context it should pass to event listeners
-window.BehaviorBus.attachContext(window);
+window.BehaviorBus = new WindowBehaviorBus(window.BEHAVIORS, window);
 ```
 
+Event listeners attached by `BehaviorBus.attachBehaviors([...])` look like this:
 ```javascript
 // example: listen for PAGE_LOAD event, look for URLs on the page, and emit a DISCOVERED_URL event for each
-window.BehaviorBus.addEventListener('PAGE_LOAD', async (event, BehaviorBus, window) => {
+BehaviorBus.on('PAGE_LOAD', async (event, BehaviorBus, window) => {
     for (const elem of window.document.querySelector('a[href]')) {
         BehaviorBus.dispatch({type: 'DISCOVERED_OUTLINK', url: elem.href})
     }
@@ -232,15 +226,17 @@ window.BehaviorBus.addEventListener('PAGE_LOAD', async (event, BehaviorBus, wind
 ```
 ```javascript
 // example: listen for *all* events on the BehaviorBus and log them to console
-window.BehaviorBus.addEventListener('*', (event, BehaviorBus, window) => {
+BehaviorBus.on('*', (event, BehaviorBus, window) => {
     console.log(`[window] -> [LOG] : ${JSON.stringify(event)}`);
-}, {behavior_name: 'WindowBehaviorBus'});
+}, {behavior_name: BehaviorBus.name});
 ```
+
+Events can be dispatched by calling `BehaviorBus.emit({type: 'EVENT_TYPE', ...})`:
 ```javascript
 // example: dispatch an event to the event bus immediately
-window.BehaviorBus.dispatch({type: 'PAGE_LOAD', url: window.location.href})
+BehaviorBus.emit({type: 'PAGE_LOAD', url: window.location.href})
 //   OR equivalent:
-window.BehaviorBus.dispatch(new BehaviorEvent('PAGE_LOAD', {url: window.location.href}))
+BehaviorBus.emit(new BehaviorEvent('PAGE_LOAD', {url: window.location.href}))
 ```
 ```javascript
 // these methods are all the same, they are just aliases of each other
