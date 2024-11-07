@@ -1,5 +1,7 @@
 # behaviors-spec
 
+> `BehaviorSchema@0.1.0` 
+
 Proposal for a shared user script specification between archiving &amp; crawling tools.
 
 Designed to allow expending a puppeteer or browser-based workflow with custom JS snippets.  
