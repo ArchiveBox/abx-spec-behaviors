@@ -1,6 +1,6 @@
 # `behavior-spec` @ `v0.1.0`
 
-> `BehaviorSchema, `BehaviorBusSchema`, `BehaviorEventSchema`, `BehaviorDriverSchema`
+> `BehaviorSchema`, `BehaviorBusSchema`, `BehaviorEventSchema`, `BehaviorDriverSchema`
 
 Proposal for a shared user script specification between archiving &amp; crawling tools.
 
