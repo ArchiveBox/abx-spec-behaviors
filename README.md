@@ -7,9 +7,9 @@ Designed to allow expending a puppeteer or browser-based workflow with custom JS
 
 **Key Concepts:**
 
-- [`Behavior`](#example-behavior): a plugin that defines some event listener hook methods
-- [`BehaviorBus`](#behaviorbus-implementation): an event bus that lets you register event listener methods + dispatch `BehaviorEvent`s
-- [`Behavior Driver`](#example-behavior-driver): sets up a `BehaviorBus` for browser/puppeteer/extensions, registers `Behavior` hooks, and fires all the main lifecycle events 
+- [`Behavior`](#behavior): a plugin that defines some event listener hook methods
+- [`BehaviorBus`](#behaviorbus): an event bus that lets you register event listener methods + dispatch `BehaviorEvent`s
+- [`Behavior Driver`](#behaviordriver): sets up a `BehaviorBus` for browser/puppeteer/extensions, registers `Behavior` hooks, and fires all the main lifecycle events 
 
 ## Quickstart
 
@@ -24,7 +24,7 @@ node example_puppeteer_driver.js
 
 ---
 
-## Example Behavior
+## `Behavior`
 
 ```javascript
 class ExtractArticleText {
@@ -75,7 +75,9 @@ const DiscoverOutlinks = {
 
 To see more example behaviors, check out: `src/example_behaviors.js`.
 
-### Behavior Usage
+<br/>
+
+### `Behavior` Usage
 
 `Behaviors` are used as part of a crawl process implemented by a `Behavior Driver`:
 ```javascript
@@ -90,9 +92,9 @@ await crawlInPuppeteer('https://example.com', [ExtractArticleText, DiscoverOutli
 
 <br/>
 
-## Example Behavior Driver
+## `BehaviorDriver`
 
-Drivers are just like Behaviors in that they implement some event listeners.  
+`BehaviorDriver`s are just like `Behavior`s in that they implement some event listeners.  
 Drivers are designed to implement the core events used by all the other behaviors as
 their "standard library" of utilities, e.g. filesystem IO, adding to crawl queue, etc...
 ```javascript
@@ -134,7 +136,9 @@ To see how Behaviors would be run by different tools, check out the example driv
 - `src/example_browsertrix_driver.js`
 - `src/example_archivebox_driver.js`
 
-### Behavior Driver Usage
+<br/>
+
+### `BehaviorDriver` Usage
 
 Here's how you can test a driver:
 ```javascript
@@ -204,16 +208,10 @@ $ node ./example_puppeteer_driver.js
 
 <br/>
 
-## BehaviorBus Implementation
+## `BehaviorBus`
 
 `BehaviorBus` extends [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) and is a simple event bus that can consumer/emit events and dispatch event listener callbacks.  
 `BehaviorEvent` extends [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent), both work just like the normal DOM event system.
-
-A new `BehaviorBus` is set up for each context as soon as page loading starts.
-```javascript
-window.location.href = 'https://example.com'
-window.BehaviorBus = new WindowBehaviorBus(window.BEHAVIORS, window);
-```
 
 Event listeners attached by `BehaviorBus.attachBehaviors([...])` look like this:
 ```javascript
@@ -224,11 +222,20 @@ BehaviorBus.on('PAGE_LOAD', async (event, BehaviorBus, window) => {
     }
 })
 ```
+
 ```javascript
 // example: listen for *all* events on the BehaviorBus and log them to console
 BehaviorBus.on('*', (event, BehaviorBus, window) => {
     console.log(`[window] -> [LOG] : ${JSON.stringify(event)}`);
 }, {behavior_name: BehaviorBus.name});
+```
+
+### `behaviorBus` Usage
+
+A new `BehaviorBus` is set up for each context as soon as page loading starts.
+```javascript
+window.location.href = 'https://example.com'
+window.BehaviorBus = new WindowBehaviorBus(window.BEHAVIORS, window);
 ```
 
 Events can be dispatched by calling `BehaviorBus.emit({type: 'EVENT_TYPE', ...})`:
@@ -246,7 +253,9 @@ BehaviorBus.addEventListener(event_name, handler, options) == BehaviorBus.on(eve
 
 See `src/event_bus.js` for the full implementation.
 
-#### All `BehaviorBus` instances get connected
+<br/>
+
+#### How `BehaviorBus` instances get connected
 
 `BehaviorBus` instances are typically linked together so that events emitted by one get sent to all the others.  
   
