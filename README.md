@@ -157,6 +157,31 @@ To see more example behaviors, check out: [`src/example_behaviors.js`](https://g
 `BehaviorBus` extends [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) and is a simple event bus that can consume/emit events + dispatch event listener callbacks.  
 `BehaviorEvent` extends [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent), both are based on the normal DOM event system / standard types and require no extra libraries.
 
+### `BehaviorBus` Usage
+
+A new `BehaviorBus` is set up for each context by the `BehaviorDriver` as soon as page loading starts.
+```javascript
+window.location.href = 'https://example.com'
+window.BehaviorBus = new WindowBehaviorBus(window.BEHAVIORS, window);
+```
+
+```javascript
+// these methods are all the same, they are just aliases of each other
+BehaviorBus.dispatch(event) == BehaviorBus.dispatchEvent(event) == BehaviorBus.emit(event)
+BehaviorBus.addEventListener(event_name, handler, options) == BehaviorBus.on(event_name, handler, options)
+```
+
+See `src/event_bus.js` for the full implementation.
+
+### `BehaviorBus` Examples
+
+```javascript
+global.BehaviorBus = new WindowBehaviorBus(window.BEHAVIORS, window);
+BehaviorBus.attachBehaviors([PuppeteerCrawlDriver])
+BehaviorBus.attachBehaviors(window.BEHAVIORS)
+BehaviorBus.attachContext(window)
+```
+
 Event listeners attached by `BehaviorBus.attachBehaviors([...])` look like this:
 ```javascript
 // example: listen for PAGE_LOAD event, look for URLs on the page, and emit a DISCOVERED_URL event for each
@@ -174,24 +199,13 @@ BehaviorBus.on('*', (event, BehaviorBus, window) => {
 }, {behavior_name: BehaviorBus.name});
 ```
 
-### `BehaviorBus` Usage
-
-A new `BehaviorBus` is set up for each context by the `BehaviorDriver` as soon as page loading starts.
 ```javascript
-window.location.href = 'https://example.com'
-window.BehaviorBus = new WindowBehaviorBus(window.BEHAVIORS, window);
+// dispatching an Event
+BehaviorBus.emit({type: 'DISCOVERED_OUTLINK', url})
+// OR
+BehaviorBus.emit(new BehaviorEvent('DISCOVERED_OUTLINK', {url}))
 ```
 
-
-```javascript
-// these methods are all the same, they are just aliases of each other
-BehaviorBus.dispatch(event) == BehaviorBus.dispatchEvent(event) == BehaviorBus.emit(event)
-BehaviorBus.addEventListener(event_name, handler, options) == BehaviorBus.on(event_name, handler, options)
-```
-
-See `src/event_bus.js` for the full implementation.
-
-<br/>
 
 ### How `BehaviorBus` instances get connected
 
