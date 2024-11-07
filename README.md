@@ -7,9 +7,9 @@ Building on the ideas from [`browsertrix-behaviors`](https://github.com/webrecor
 
 Designed to allow extending browser automation and crawling workflows with custom behavior, using an event-based interface.  
 ```javascript
-WindowBehaviorBus.on('PAGE_LOAD', async ({url}, BehaviorBus, window) => ... do something ...)
-PuppeteerBehaviorBus.on('DISCOVERED_OUTLINK',  async ({url}, BehaviorBus, window) => ... add to crawl queue ...)
-PuppeteerBehaviorBus.on('DISCOVERED_VIDEO',  async ({url}, BehaviorBus, window) => ... download with yt-dlp ...)
+WindowBehaviorBus.on('PAGE_LOAD', async ({url}, BehaviorBus, window) => ... do something inside window context ...)
+PuppeteerBehaviorBus.on('DISCOVERED_OUTLINK',  async ({url}, BehaviorBus, window) => ... add to pptr crawl queue ...)
+PuppeteerBehaviorBus.on('DISCOVERED_VIDEO',  async ({url}, BehaviorBus, window) => ... call yt-dlp in shell cmd ...)
 ```
 
 It's one step up from TamperMonkey, with the ability to define event listeners for `window` events, puppeteer lifecycle events, service worker / browser extension events, and other events implemented by `CrawlDriver`s.
