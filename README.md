@@ -129,7 +129,6 @@ Here's how you can test a driver:
 ```javascript
 window.location.href = 'https://example.com'
 
-
 // driver is initialized right after navigation starts, before page is loaded
 const BehaviorBus = new WindowBehaviorBus([BrowserCrawlDriver, ...window.BEHAVIORS], window);
 
