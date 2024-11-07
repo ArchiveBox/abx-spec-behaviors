@@ -143,23 +143,21 @@ BehaviorBus.emit({type: 'FS_WRITE_FILE', path: 'text.txt', content: 'testing wri
 $ cd src/
 $ node ./example_puppeteer_driver.js
 // loading src/behavior_bus.js
-Registering window.BehaviorEvent = ...
-Registering window.WindowBehaviorBus = ...
-Registering window.PuppeteerBehaviorBus = ...
-Registering window.ServiceWorkerBehaviorBus = ...
-Registering window.initWindowBehaviorBus = ...
-Registering window.initServiceWorkerBehaviorBus = ...
+[window] loaded window.BehaviorEvent
+[window] loaded window.WindowBehaviorBus
+[window] loaded window.PuppeteerBehaviorBus
+[window] loaded window.ServiceWorkerBehaviorBus
 
 // loading src/example_behaviors.js
-Registering window.DiscoverOutlinksBehavior = ...
-Registering window.ExtractArticleTextBehavior = ...
-Registering window.ExpandCommentsBehavior = ...
-Registering window.BEHAVIORS = ...
+[window] loaded window.DiscoverOutlinksBehavior
+[window] loaded window.ExtractArticleTextBehavior
+[window] loaded window.ExpandCommentsBehavior
+[window] loaded window.BEHAVIORS
 
 // setting up BehaviorBus instances
-initialized PuppeteerBehaviorBus()
-initialized WindowBehaviorBus()
-linked PuppeteerBehaviorBus() <-> WindowBehaviorBus()
+[puppeteer] initialized page.BehaviorBus    = PuppeteerBehaviorBus()
+[window]    initialized window.BehaviorBus  = WindowBehaviorBus()
+[puppeteer] linked PuppeteerBehaviorBus() <-> WindowBehaviorBus()
 
 [puppeteer] -> [LOG] : {"type":"PAGE_SETUP","metadata":{"id":"af16f6ea-a17b-4339-88ec-040262cdeaa5","timestamp":1730956441325,"path":["PuppeteerCrawlDriver","PuppeteerBehaviorBus"]},"url":"https://example.com"}
 [puppeteer] -> [window]: {"type":"PAGE_SETUP","metadata":{"id":"af16f6ea-a17b-4339-88ec-040262cdeaa5","timestamp":1730956441325,"path":["PuppeteerCrawlDriver","PuppeteerBehaviorBus","PuppeteerBusToWindowBusForwarder"]},"url":"https://example.com"}
