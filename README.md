@@ -191,13 +191,13 @@ For the full linking code, see here:
 
 ```javascript
 const event = {
-    type: 'PAGE_LOAD',
-    metadata: {
+    type: 'PAGE_LOAD',         // required
+    metadata: {                // added automatically by BehaviorBus
         id: uuid4(),
         timestamp: Date.now(),
         path: ['PuppeteerBehaviorBus', 'WindowBehaviorBus'],
     }
-    ...detail,
+    ...detail,                 // any extra data you want to include
 }
 ```
 This is also equivalent, and provides some nice validation/type checking:
