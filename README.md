@@ -32,40 +32,27 @@ const DiscoverOutlinksBehavior = {
     name: 'DiscoverOutlinksBehavior',
     schema: 'BehaviorSchema@0.1.0',
 
-    // private helper methods can be defined on the behavior
-    _isValidOutlink: (url) => {
-        const extension = url.split('?')[0].split('#')[0].split('.').at(-1) || 'html'
-        return ['html', 'htm', 'php', 'asp', 'aspx', 'jsp'].includes(extension.toLowerCase())
+    extractOutlinks: (elem) => {
+        return [...elem.querySelectorAll('a[href], iframe[src]')].map(a => a.href || a.src),
     },
 
-    // hooks are public methods that get called when those events fire on a certain Event Bus
     hooks: {
-        WindowBehaviorBus: {
-            // this hook will be called when the PAGE_CAPTURE event is fired on the WindowBehaviorBus
-            // the driver fires the PAGE_CAPTURE event on all event busses when it has finished loading a page and its time to extract content
-            PAGE_CAPTURE: async (event, BehaviorBus, window) => {
-                console.log(`[window] -> [DiscoverOutlinksBehavior] 🔍 Discovering outlinks by finding <a href> tags...`)
+        window: {
+            // PAGE_SETUP: ...
+            // PAGE_LOAD: ...
 
-                for (const elem of window.document.querySelectorAll('a')) {
-                    BehaviorBus.emit({type: 'DISCOVERED_OUTLINK', url: elem.href, elem})
+            PAGE_CAPTURE: async (event, BehaviorBus, window) => {
+                for (const url of DiscoverOutlinksBehavior.extractOutlinks(window.document.body)) {
+                    BehaviorBus.emit({type: 'DISCOVERED_OUTLINK', url})
+                    BehaviorBus.emit({type: 'FS_WRITE_FILE', path: 'outlinks.txt', mode: 'append', content: url + '\n'})
                 }
             },
-        },
-        PuppeteerBehaviorBus: {
-            // the driver fires the PAGE_SETUP event on all buses as soon as the page has started navigating but before it has finished loading
-            // because this hook is under PuppeteerBehaviorBus, only drivers that use puppeteer will trigger this hook
-            PAGE_SETUP: async (event, BehaviorBus, page) => {
-                console.log(`[puppeteer] -> [DiscoverOutlinksBehavior] 🔧 Discovering outlinks by watching for requests ending in .html...`)
 
-                await page.setRequestInterception(true);
-                page.on('request', request => {
-                    request.continue();
-                    if (DiscoverOutlinksBehavior._isValidOutlink(request.url())) {
-                        BehaviorBus.emit({type: 'DISCOVERED_OUTLINK', url: request.url()})
-                    }
-                })
-            },
+            // PAGE_CAPTURE_COMPLETE: ...
         },
+
+     // puppeteer: ...
+     // serviceworker: ...
     },
 }
 ```
