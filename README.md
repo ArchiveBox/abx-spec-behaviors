@@ -18,7 +18,24 @@ Designed to allow expending a puppeteer or browser-based workflow with custom JS
 
 ## Goals
 
-To create an inter-operable spec for plugins that many scraper and digital archiving projects can share. Aiming for collaboration between:
+To create an inter-operable spec for plugins that many scraper and digital archiving projects can share.
+
+#### Use Cases
+
+No one wants to maintain all the user scripts needed effectively crawl millions of different websites alone.  
+Here are some examples of things that could be implemented as behaviors and shared between these communities:
+
+- `scroll down to load infiniscroll content`
+- `expand/unroll reddit/twitter comment threads automatically`
+- `auto-solve CAPTCHAs`
+- `log into a site using some saved credentils`
+- `dismiss modals / cookie consent popups / privacy policies`
+- `block ads requests / remove ads elements from page`
+- `extract youtube videos/audio/subtitles to mp4/mp3/sub files`
+- `export discovered outlink URLs to a Google Sheet`
+- and more...
+
+We're aiming to foster easier collaboration of browser automation snippets like these between:
 
 #### Toolmakers
 - https://ArchiveBox.io
@@ -35,21 +52,6 @@ To create an inter-operable spec for plugins that many scraper and digital archi
 - https://www.starlinglab.org
 
 > *Want to collaborate? Join us on the [ArchiveBox Zulip](https://zulip.archivebox.io/#narrow/stream/163-ideas/topic/new.20Behavior.20specification.20for.20community.20ecosystem.20plugins) or [WebRecorder Discord](https://discord.com/channels/895426029194207262/1303099855262187715/1303955724442931202), or [open an issue](https://github.com/ArchiveBox/behaviors-spec).*
-
-#### Use Cases
-
-No one wants to maintain all the user scripts needed effectively crawl millions of different websites alone.  
-Here are some examples of things that could be implemented as behaviors and shared between these communities:
-
-- `scroll down to load infiniscroll content`
-- `expand/unroll reddit/twitter comment threads automatically`
-- `auto-solve CAPTCHAs`
-- `log into a site using some saved credentils`
-- `dismiss modals / cookie consent popups / privacy policies`
-- `block ads requests / remove ads elements from page`
-- `extract youtube videos/audio/subtitles to mp4/mp3/sub files`
-- `export discovered outlink URLs to a Google Sheet`
-- and more...
 
 
 ## Quickstart
