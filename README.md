@@ -20,7 +20,7 @@ Designed to allow expending a puppeteer or browser-based workflow with custom JS
 
 To create an inter-operable spec for plugins that many scraper and digital archiving projects can share. Aiming for collaboration between:
 
-Want to collaborate on it? Come join the discussion on the [ArchiveBox Zulip](https://zulip.archivebox.io), or [WebRecorder Discord](https://discord.com/channels/895426029194207262/1303099855262187715/1303955724442931202), or open an issue.
+Want to collaborate? Discuss on the [ArchiveBox Zulip](https://zulip.archivebox.io/#narrow/stream/163-ideas/topic/new.20Behavior.20specification.20for.20community.20ecosystem.20plugins), or [WebRecorder Discord](https://discord.com/channels/895426029194207262/1303099855262187715/1303955724442931202), or open an issue.
 
 #### Toolmakers
 - https://ArchiveBox.io
@@ -392,8 +392,8 @@ $ node ./example_puppeteer_driver.js
 
 ## Further Reading
 
-- Proposal Discussion https://discord.com/channels/895426029194207262/1303099855262187715/1303955724442931202
+- Proposal Discussions: [ArchiveBox Zulip](https://zulip.archivebox.io/#narrow/stream/163-ideas/topic/new.20Behavior.20specification.20for.20community.20ecosystem.20plugins) and [WebRecorder Discord](https://discord.com/channels/895426029194207262/1303099855262187715/1303955724442931202)
 - Development Accouncement: https://docs.sweeting.me/s/archivebox-plugin-ecosystem-announcement
 - Browsertrix's existing behaviors system: https://github.com/webrecorder/browsertrix-behaviors
-- Inspired by: https://pluggy.readthedocs.io/en/stable/index.html
 - Built on: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
+- Inspired by: https://pluggy.readthedocs.io/en/stable/index.html
