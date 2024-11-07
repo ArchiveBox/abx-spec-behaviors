@@ -4,7 +4,7 @@
 import puppeteer from 'puppeteer';
 import fs from 'node:fs';
 
-import { BehaviorEvent, PuppeteerBehaviorBus, initWindowBehaviorBus, initServiceWorkerBehaviorBus } from './behavior_bus.js';
+import { BehaviorEvent, PuppeteerBehaviorBus } from './behavior_bus.js';
 import { BEHAVIORS } from './example_behaviors.js';
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -23,7 +23,7 @@ const linkPuppeteerBusToWindowBus = async (PuppeteerBehaviorBus, page) => {
 
     // set up BehaviorBus inside window context
     await page.evaluate(() => {
-        window.initWindowBehaviorBus(window.BEHAVIORS)
+        window.BehaviorBus = new WindowBehaviorBus(window.BEHAVIORS, window)
         console.log(`[window] initialized global.BehaviorBus = WindowBehaviorBus()`);
     });
 
@@ -79,8 +79,7 @@ const linkPuppeteerBusToServiceWorkerBus = async (PuppeteerBehaviorBus, browser,
 
     // set up BehaviorBus inside serviceWorker context
     await service_worker.evaluate(() => {
-        window.initServiceWorkerBehaviorBus(window.BEHAVIORS)
-        console.log(`initialized window.BehaviorBus = ServiceWorkerBehaviorBus()`);
+        window.BehaviorBus = new ServiceWorkerBehaviorBus(window.BEHAVIORS, window)
     });
 
     // set up forwarding from ServiceWorkerBehaviorBus -> PuppeteerBehaviorBus
@@ -143,17 +142,9 @@ const PuppeteerCrawlDriver = {
 const crawlInPuppeteer = async (url, behaviors) => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-    const BehaviorBus = new PuppeteerBehaviorBus();
-    console.log(`[puppeteer] initialized global.BehaviorBus = PuppeteerBehaviorBus()`);
-
-    BehaviorBus.addEventListener('*', (event) => {
-        console.log()
-        console.log(`[puppeteer] -> [LOG] : ${JSON.stringify(event)}`);
-    }, {behavior_name: PuppeteerCrawlDriver.name});
-
+    
     const navigationPromise = page.goto(url);
-    BehaviorBus.attachBehaviors([...PuppeteerCrawlDriver, ...behaviors]);
-    BehaviorBus.attachContext(page);
+    const BehaviorBus = new PuppeteerBehaviorBus(behaviors, page);
     await navigationPromise;
 
     await linkPuppeteerBusToWindowBus(BehaviorBus, page);

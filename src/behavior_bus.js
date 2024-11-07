@@ -91,10 +91,12 @@ class BaseBehaviorBus extends EventTarget {
     }
 
     attachContext(context) {          // e.g. WindowBehaviorBus.attachContext(window)
+        if (!context) return;
         this.context = context;
         this._notifyIfReady();
     }
-    attachBehaviors(behaviors=[]) {   // e.g. WindowBehaviorBus.attachBehaviors([{hooks: {window: {PAGE_LOAD: (event, BehaviorBus, window) => {}}}}])
+    attachBehaviors(behaviors) {   // e.g. WindowBehaviorBus.attachBehaviors([{hooks: {window: {PAGE_LOAD: (event, BehaviorBus, window) => {}}}}])
+        if (!behaviors) return;
         this.behaviors = [...(this.behaviors || []), ...behaviors]
         for (const behavior of behaviors) {
             const handlers_for_this_context = behavior.hooks[this.name] ||  behavior.hooks[this.name.toLowerCase().replace('behaviorbus', '')] || {};
@@ -104,6 +106,7 @@ class BaseBehaviorBus extends EventTarget {
         }
         this._notifyIfReady()
     }
+
 
     _notifyIfReady() {
         const is_ready = this.context !== null && this.behaviors !== null
@@ -193,51 +196,66 @@ class BaseBehaviorBus extends EventTarget {
 
 class WindowBehaviorBus extends BaseBehaviorBus {
     name = 'WindowBehaviorBus';
-}
 
-class PuppeteerBehaviorBus extends BaseBehaviorBus {
-    name = 'PuppeteerBehaviorBus';
+    constructor(behaviors, window=globalThis.window) {
+        super();
+        window.BehaviorBus = this;
+        this.attachBehaviors(behaviors);
+        this.attachContext(window);
+    
+        this.addEventListener('*', (event, BehaviorBus, window) => {
+            console.log(`[window] -> [LOG] : ${JSON.stringify(event)}`);
+        }, {behavior_name: this.name});
+
+        console.log(`[window] initialized window.BehaviorBus = WindowBehaviorBus()`);
+    }
 }
 
 class ServiceWorkerBehaviorBus extends BaseBehaviorBus {
     name = 'ServiceWorkerBehaviorBus';
+
+    constructor(behaviors, window=globalThis.window) {
+        super();
+        window.BehaviorBus = this;
+        this.attachBehaviors(behaviors);
+        this.attachContext(window);
+        
+        // log all events to the console
+        this.addEventListener('*', (event, BehaviorBus, window) => {
+            console.log(`[serviceWorker] -> [LOG] : ${JSON.stringify(event)}`);
+        }, {behavior_name: this.name});
+    
+        // listen for chrome.runtime.onMessage events from content scripts
+        window.chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+            if (message._is_behaviorbus_event) {
+                BehaviorBus.dispatchEvent(message.event);
+            }
+        }, {behavior_name: this.name});
+
+        console.log(`[serviceWorker] initialized window.BehaviorBus = ServiceWorkerBehaviorBus()`);
+    }
+}
+
+class PuppeteerBehaviorBus extends BaseBehaviorBus {
+    name = 'PuppeteerBehaviorBus';
+
+    constructor(behaviors, page) {
+        super();
+        page.BehaviorBus = this;
+        this.attachBehaviors(behaviors);
+        this.attachContext(page);
+
+        this.addEventListener('*', (event, BehaviorBus, page) => {
+            console.log(`[puppeteer] -> [LOG] : ${JSON.stringify(event)}`);
+        }, {behavior_name: this.name});
+
+        console.log(`[puppeteer] initialized page.BehaviorBus = PuppeteerBehaviorBus()`);
+    }
 }
 
 
-const initWindowBehaviorBus = (behaviors) => {
-    const BehaviorBus = new WindowBehaviorBus();
-    window.BehaviorBus = BehaviorBus;
-    BehaviorBus.attachBehaviors(behaviors);
-    BehaviorBus.attachContext(window);
 
-    BehaviorBus.addEventListener('*', (event, BehaviorBus, window) => {
-        console.log(`[window] -> [LOG] : ${JSON.stringify(event)}`);
-    }, {behavior_name: 'WindowBehaviorBus'});
-
-    return BehaviorBus;
-}
-
-const initServiceWorkerBehaviorBus = (behaviors) => {
-    const BehaviorBus = new ServiceWorkerBehaviorBus();
-    window.BehaviorBus = BehaviorBus;
-    BehaviorBus.attachBehaviors(behaviors);
-    BehaviorBus.attachContext(window);
-
-    BehaviorBus.addEventListener('*', (event, BehaviorBus, window) => {
-        console.log(`[serviceWorker] -> [LOG] : ${JSON.stringify(event)}`);
-    }, {behavior_name: 'ServiceWorkerBehaviorBus'});
-
-    // listen for chrome.runtime.onMessage events from content scripts
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        if (message._is_behaviorbus_event) {
-            BehaviorBus.dispatchEvent(message.event);
-        }
-    }, {behavior_name: 'ServiceWorkerBehaviorBus'});
-
-    return BehaviorBus;
-}
-
-var all_exports = { BehaviorEvent, WindowBehaviorBus, PuppeteerBehaviorBus, ServiceWorkerBehaviorBus, initWindowBehaviorBus, initServiceWorkerBehaviorBus }
+var all_exports = { BehaviorEvent, WindowBehaviorBus, PuppeteerBehaviorBus, ServiceWorkerBehaviorBus }
 
 if (globalThis.navigator) {
     // loaded from browser, running in window
@@ -254,4 +272,4 @@ if (globalThis.navigator) {
     }
 }
 
-export { BehaviorEvent, WindowBehaviorBus, PuppeteerBehaviorBus, ServiceWorkerBehaviorBus, initWindowBehaviorBus, initServiceWorkerBehaviorBus }
+export { BehaviorEvent, WindowBehaviorBus, PuppeteerBehaviorBus, ServiceWorkerBehaviorBus }

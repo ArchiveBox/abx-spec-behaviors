@@ -54,7 +54,7 @@ const crawlInBrowser = async (url, behaviors) => {
     document.head.appendChild(behaviors_tag);
 
     // initialize the WindowBehaviorBus bus
-    const BehaviorBus = window.initWindowBehaviorBus([BrowserCrawlDriver, ...behaviors]);
+    const BehaviorBus = new WindowBehaviorBus([BrowserCrawlDriver, ...behaviors]);
     BehaviorBus.dispatchEvent(new BehaviorEvent('PAGE_SETUP', {url}, {path: [BrowserCrawlDriver.name]}));
 
     // run the page lifecycle events
