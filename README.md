@@ -29,10 +29,11 @@ Want to collaborate on it? Come join the discussion on the [ArchiveBox Zulip](ht
 - https://conifer.rhizome.org
 - https://linkwarden.app
 - https://github.com/gildas-lormeau/singlefile
+- https://github.com/bellingcat/auto-archiver
 
 #### Industry
 - https://reset.tech
-- https://mediaforcellc.com/
+- https://mediaforcellc.com
 - https://www.starlinglab.org
 
 #### Use Cases
@@ -47,6 +48,7 @@ Here are some examples of things that could be implemented as behaviors and shar
 - `dismiss modals / cookie consent popups / privacy policies`
 - `block ads requests / remove ads elements from page`
 - `extract youtube videos/audio/subtitles to mp4/mp3/sub files`
+- `export discovered outlink URLs to a Google Sheet`
 - and more...
 
 
