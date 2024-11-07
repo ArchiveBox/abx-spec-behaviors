@@ -1,5 +1,5 @@
 {
-  "name": "behaviors-spec",
+  "name": "abx-spec-behaviors",
   "version": "0.1.0",
   "description": "Shared behaviors spec for puppeteer and browser scripts",
   "keywords": [
@@ -11,12 +11,12 @@
   "author": "Nick Sweeting",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ArchiveBox/behaviors-spec/issues"
+    "url": "https://github.com/ArchiveBox/abx-spec-behaviors/issues"
   },
-  "homepage": "https://github.com/ArchiveBox/behaviors-spec#readme",
+  "homepage": "https://github.com/ArchiveBox/abx-spec-behaviors#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ArchiveBox/behaviors-spec.git"
+    "url": "git+https://github.com/ArchiveBox/abx-spec-behaviors.git"
   },
   "type": "module",
   "scripts": {
