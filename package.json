@@ -18,6 +18,7 @@
     "type": "git",
     "url": "git+https://github.com/ArchiveBox/behaviors-spec.git"
   },
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

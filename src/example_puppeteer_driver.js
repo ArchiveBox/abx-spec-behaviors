@@ -24,7 +24,7 @@ const linkPuppeteerBusToWindowBus = async (PuppeteerBehaviorBus, page) => {
     // set up BehaviorBus inside window context
     await page.evaluate(() => {
         window.initWindowBehaviorBus(window.BEHAVIORS)
-        console.log(`initialized window.BehaviorBus = WindowBehaviorBus()`);
+        console.log(`[window] initialized global.BehaviorBus = WindowBehaviorBus()`);
     });
 
     // set up forwarding from WindowBehaviorBus -> PuppeteerBehaviorBus
@@ -120,6 +120,7 @@ const crawlInPuppeteer = async (url, behaviors) => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     const BehaviorBus = new PuppeteerBehaviorBus();
+    console.log(`[puppeteer] initialized global.BehaviorBus = PuppeteerBehaviorBus()`);
 
     BehaviorBus.addEventListener('*', (event) => {
         console.log()
