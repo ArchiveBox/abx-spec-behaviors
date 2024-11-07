@@ -1,4 +1,4 @@
-# `behavior-spec` @ `v0.1.0`
+# `abx-behavior-spec` @ `v0.1.0`
 
 > `BehaviorSchema`, `BehaviorBusSchema`, `BehaviorEventSchema`, `BehaviorDriverSchema`
 
