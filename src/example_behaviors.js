@@ -5,7 +5,7 @@
 const DiscoverOutlinksBehavior = {
     schema: 'BehaviorSchema@0.1.0',
     name: 'DiscoverOutlinksBehavior',
-    contexts: {
+    hooks: {
         WindowBehaviorBus: {
             // '*': async (event, BehaviorBus, window) => {
             //     console.log(`[window] -> [DiscoverOutlinksBehavior] ${JSON.stringify(event)}`);
@@ -47,7 +47,7 @@ const DiscoverOutlinksBehavior = {
 const ExtractArticleTextBehavior = {
     schema: 'BehaviorSchema@0.1.0',
     name: 'ExtractArticleTextBehavior',
-    contexts: {
+    hooks: {
         WindowBehaviorBus: {
             // '*': async (event, BehaviorBus, window) => {
             //     console.log(`[window] -> [ExtractArticleTextBehavior] ${JSON.stringify(event)}`);
@@ -83,7 +83,7 @@ const ExpandCommentsBehavior = {
         return [];
     },
 
-    contexts: {
+    hooks: {
         WindowBehaviorBus: {
             // '*': async (event, BehaviorBus, window) => {
             //     console.log(`[window] -> [ExpandCommentsBehavior] ${JSON.stringify(event)}`);

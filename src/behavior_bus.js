@@ -79,7 +79,7 @@ class BaseBehaviorBus extends EventTarget {
     constructor() {
         super();
         this.context = null;               // e.g. window={navigator, window, document, BehaviorBus, ...}, puppeteer={browser, page, BehaviorBus, ...}, serviceWorker={navigator, BehaviorBus, ...}
-        this.behaviors = null;             // e.g. [{contexts: {window: {PAGE_LOAD: (event, BehaviorBus, window) => {}}}}, {contexts: {puppeteer: {FOUND_CONTENT: (event, BehaviorBus, page) => {}}}}]
+        this.behaviors = null;             // e.g. [{hooks: {window: {PAGE_LOAD: (event, BehaviorBus, window) => {}}}}, {hooks: {puppeteer: {FOUND_CONTENT: (event, BehaviorBus, page) => {}}}}]
         this._wrappedListeners = new Map();
         this.name = this.constructor.name || this.name || 'BaseBehaviorBus';
         if (this.name === 'BaseBehaviorBus' || this.name === null) {
@@ -94,10 +94,10 @@ class BaseBehaviorBus extends EventTarget {
         this.context = context;
         this._notifyIfReady();
     }
-    attachBehaviors(behaviors=[]) {   // e.g. WindowBehaviorBus.attachBehaviors([{contexts: {window: {PAGE_LOAD: (event, BehaviorBus, window) => {}}}}])
+    attachBehaviors(behaviors=[]) {   // e.g. WindowBehaviorBus.attachBehaviors([{hooks: {window: {PAGE_LOAD: (event, BehaviorBus, window) => {}}}}])
         this.behaviors = [...(this.behaviors || []), ...behaviors]
         for (const behavior of behaviors) {
-            const handlers_for_this_context = behavior.contexts[this.name] || {};
+            const handlers_for_this_context = behavior.hooks[this.name] || {};
             for (const [eventName, handler] of Object.entries(handlers_for_this_context)) {
                 this.addEventListener(eventName, handler, {behavior_name: behavior.name || 'UNKNOWN_BEHAVIOR'});
             }

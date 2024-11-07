@@ -26,7 +26,7 @@ const DiscoverOutlinksBehavior = {
     name: 'DiscoverOutlinksBehavior',
     schema: 'BehaviorSchema@0.1.0',
     
-    contexts: {
+    hooks: {
         WindowBehaviorBus: {
             PAGE_CAPTURE: async (event, BehaviorBus, window) => {
                 console.log(`[window] -> [DiscoverOutlinksBehavior] 🔍 Discovering outlinks by finding <a href> tags...`)
