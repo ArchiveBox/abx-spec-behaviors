@@ -211,7 +211,6 @@ console.log(event.detail)
     ...detail,                 // any extra data you include e.g. {url}
 }
 ```
-```
 
 ### `BehaviorEvent` Usage
 
