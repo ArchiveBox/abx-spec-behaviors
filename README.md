@@ -193,7 +193,7 @@ across all the contexts available to the driver. e.g. a behavior hook running in
 emit an event that triggers a hook it defined on the <code>PuppeteerBehaviorBus</code>. This means <code>BehaviorEvent</code>s will "jailbreak"
 out of a page's typically isolated context and propagate up to a parent puppeteer context, and vice versa.
 
-<pre lang="javascript><code>// set up forwarding from WindowBehaviorBus -> PuppeteerBehaviorBus
+<pre lang="javascript"><code>// set up forwarding from WindowBehaviorBus -> PuppeteerBehaviorBus
 await page.exposeFunction('dispatchEventToPuppeteerBus', (event) => PuppeteerBehaviorBus.emit(event));
 await page.evaluate(() => {
     window.BehaviorBus.addEventListener('*', (event) => {
@@ -205,7 +205,7 @@ await page.evaluate(() => {
     }, {behavior_name: 'WindowBusToPuppeteerBusForwarder'});
 });
 </code></pre>
-<pre lang="javascript><code>// set up forwarding from PuppeteerBehaviorBus -> WindowBehaviorBus
+<pre lang="javascript"><code>// set up forwarding from PuppeteerBehaviorBus -> WindowBehaviorBus
 PuppeteerBehaviorBus.addEventListener('*', (event) => {
     event = new BehaviorEvent(event);
 
