@@ -16,6 +16,8 @@ cd src/
 node example_puppeteer_driver.js
 ```
 
+---
+
 ## Example Behavior
 
 ```javascript
@@ -25,34 +27,24 @@ const DiscoverOutlinksBehavior = {
     name: 'DiscoverOutlinksBehavior',
     contexts: {
         WindowBehaviorBus: {
-            // '*': async (event, BehaviorBus, window) => {
-            //     console.log(`[window] -> [DiscoverOutlinksBehavior] ${JSON.stringify(event)}`);
-            // },
             PAGE_CAPTURE: async (event, BehaviorBus, window) => {
-                console.log(`[window] -> [DiscoverOutlinksBehavior] 🔍 Discovering outlinks...`)
+                console.log(`[window] -> [DiscoverOutlinksBehavior] 🔍 Discovering outlinks by finding <a href> tags...`)
+
                 for (const elem of window.document.querySelectorAll('a')) {
-                    BehaviorBus.dispatchEvent(new BehaviorEvent('DISCOVERED_OUTLINK', {url: elem.href, elem}))
+                    BehaviorBus.dispatchEvent({type: 'DISCOVERED_OUTLINK', url: elem.href, elem})
                 }
             },
-            DISCOVERED_OUTLINK: async (event, BehaviorBus, window) => {
-                console.log(`[window] -> [DiscoverOutlinksBehavior] ➕ Found a new outlink to add to crawl! ${event.url}`)
-                // browsertrix driver itself would also listen for this event and use it to add add URLs to the crawl queue
-            }
         },
         PuppeteerBehaviorBus: {
-            // '*': async (event, BehaviorBus, page) => {
-            //     console.log(`[puppeteer] -> [DiscoverOutlinksBehavior] ${JSON.stringify(event)}`);
-            // },
             // can also optionally implement handlers that run in other contexts (if driver implements that context)
             PAGE_SETUP: async (event, BehaviorBus, page) => {
-                console.log(`[puppeteer] -> [DiscoverOutlinksBehavior] 🔧 Setting up page for outlink discovery...`)
+                console.log(`[puppeteer] -> [DiscoverOutlinksBehavior] 🔧 Discovering outlinks by watching for requests ending in .html...`)
+
                 await page.setRequestInterception(true);
                 page.on('request', request => {
                     request.continue();
                     if (request.url().endsWith('.html')) {
-                        BehaviorBus.dispatchEvent(new BehaviorEvent('DISCOVERED_OUTLINK', {url: request.url()}));
-                        // consumes/broadcasts events to all contexts using same shared BehaviorBus
-                        // so the DISCOVERED_OUTLINK handler above would fire even though it's bound in a different context
+                        BehaviorBus.dispatchEvent({type: 'DISCOVERED_OUTLINK', url: request.url()})
                     }
                 })
             },
@@ -64,6 +56,8 @@ const DiscoverOutlinksBehavior = {
 To see more example behaviors, check out:
 
 - `src/example_behaviors.js`
+
+---
 
 ## Example Behavior Driver
 
