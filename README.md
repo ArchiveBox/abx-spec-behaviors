@@ -5,6 +5,12 @@ Proposal for a shared user script specification between archiving &amp; crawling
 Designed to allow expending a puppeteer or browser-based workflow with custom JS snippets.  
 (similar to TamperMonkey, but more powerful and designed to extend more pieces of the archiving flow)
 
+**Key Concepts:**
+
+- `Behavior`: a plugin that defines some event listener hook methods
+- `BehaviorBus`: an event bus that lets you register event listener methods + dispatch `BehaviorEvent`s
+- `BehaviorDriver`: sets up a `BehaviorBus` for browser/puppeteer/extensions, registers `Behavior` hooks, and fires all the main lifecycle events 
+
 ## Quickstart
 
 ```bash
