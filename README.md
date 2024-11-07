@@ -189,12 +189,9 @@ See `src/event_bus.js` for the full implementation.
 <br/>
   
 Drivers set this up before a page is first loaded so that behavior code running in any context can coordinate
-across all the contexts available to the driver.  
-   
-e.g. a behavior hook running inside a page on <code>WindowBehaviorBus</code> can
+across all the contexts available to the driver.  e.g. a behavior hook running inside a page on <code>WindowBehaviorBus</code> can
 emit an event that triggers a hook it defined on the <code>PuppeteerBehaviorBus</code>.  
-This means <code>BehaviorEvent</code>s will "jailbreak"
-out of a page's typically isolated context and propagate up to a parent puppeteer context, and vice versa.
+This means <code>BehaviorEvent</code>s can "jailbreak" out of a page's context and propagate up to a parent puppeteer context, and vice versa.
 
 <pre lang="javascript"><code>// set up forwarding from WindowBehaviorBus -> PuppeteerBehaviorBus
 await page.exposeFunction('dispatchEventToPuppeteerBus', (event) => PuppeteerBehaviorBus.emit(event));
