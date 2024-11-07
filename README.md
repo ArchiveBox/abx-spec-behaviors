@@ -11,7 +11,7 @@ Designed to allow expending a puppeteer or browser-based workflow with custom JS
 
 - [`Behavior`](#behavior): a plugin that implements some event listener hook methods
 - [`BehaviorBus`](#behaviorbus): an event bus that coordinates emitting events and firing matching listeners
-- [`BehaviorEvent`](#behaviorbus): an event `{type: 'PAGE_LOAD', url}` that goes through a `BehaviorBus`
+- [`BehaviorEvent`](#behaviorevent): an event `{type: 'PAGE_LOAD', url}` that goes through a `BehaviorBus`
 - [`BehaviorDriver`](#behaviordriver): navigates to URLs, sets up `BehaviorBus` instances for browser/puppeteer/extensions, registers all the `Behavior` event listeners, and fires main crawl lifecycle events 
 
 ## Quickstart
@@ -90,6 +90,138 @@ await crawlInPuppeteer('https://example.com', [ExtractArticleText, DiscoverOutli
 ```
 
 <br/>
+
+
+---
+
+
+<br/>
+
+## `BehaviorBus`
+
+`BehaviorBus` extends [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) and is a simple event bus that can consumer/emit events and dispatch event listener callbacks.  
+`BehaviorEvent` extends [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent), both work just like the normal DOM event system.
+
+Event listeners attached by `BehaviorBus.attachBehaviors([...])` look like this:
+```javascript
+// example: listen for PAGE_LOAD event, look for URLs on the page, and emit a DISCOVERED_URL event for each
+BehaviorBus.on('PAGE_LOAD', async (event, BehaviorBus, window) => {
+    for (const elem of window.document.querySelector('a[href]')) {
+        BehaviorBus.dispatch({type: 'DISCOVERED_OUTLINK', url: elem.href})
+    }
+})
+```
+
+```javascript
+// example: listen for *all* events on the BehaviorBus and log them to console
+BehaviorBus.on('*', (event, BehaviorBus, window) => {
+    console.log(`[window] -> [LOG] : ${JSON.stringify(event)}`);
+}, {behavior_name: BehaviorBus.name});
+```
+
+### `BehaviorBus` Usage
+
+A new `BehaviorBus` is set up for each context as soon as page loading starts.
+```javascript
+window.location.href = 'https://example.com'
+window.BehaviorBus = new WindowBehaviorBus(window.BEHAVIORS, window);
+```
+
+
+```javascript
+// these methods are all the same, they are just aliases of each other
+BehaviorBus.dispatch(event) == BehaviorBus.dispatchEvent(event) == BehaviorBus.emit(event)
+BehaviorBus.addEventListener(event_name, handler, options) == BehaviorBus.on(event_name, handler, options)
+```
+
+See `src/event_bus.js` for the full implementation.
+
+<br/>
+
+### How `BehaviorBus` instances get connected
+
+`BehaviorBus` instances are typically linked together so that events emitted by one get sent to all the others.  
+  
+Drivers set this up before a page is first loaded so that behavior code running in any context can coordinate
+across all the contexts available to the driver. e.g. a behavior hook running inside a page on `WindowBehaviorBus` can
+emit an event that triggers a hook it defined on the `PuppeteerBehaviorBus`. This means `BehaviorEvent`s will "jailbreak"
+out of a page's typically isolated context and propagate up to a parent puppeteer context, and vice versa.
+
+```javascript
+// set up forwarding from WindowBehaviorBus -> PuppeteerBehaviorBus
+await page.exposeFunction('dispatchEventToPuppeteerBus', (event) => PuppeteerBehaviorBus.dispatchEvent(event));
+await page.evaluate(() => {
+    window.BehaviorBus.addEventListener('*', (event) => {
+        // if the event didn't come from the PuppeteerBehaviorBus already, forward it to them
+        if (!event.detail.metadata.path.includes('PuppeteerBehaviorBus')) {
+            console.log(`[window] -> [puppeteer]: ${JSON.stringify(event)}`);
+            window.dispatchEventToPuppeteerBus(event.detail)
+        }
+    }, {behavior_name: 'WindowBusToPuppeteerBusForwarder'});
+});
+```
+```javascript
+// set up forwarding from PuppeteerBehaviorBus -> WindowBehaviorBus
+PuppeteerBehaviorBus.addEventListener('*', (event) => {
+    event = new BehaviorEvent(event);
+
+    // if the event didn't come from the WindowBehaviorBus already, forward it to them
+    if (!event.detail.metadata.path.includes('WindowBehaviorBus')) {
+        console.log(`[puppeteer] -> [window]: ${JSON.stringify(event.detail)}`);
+        page.evaluate((event) => {
+            event = new BehaviorEvent(JSON.parse(event));
+            window.BehaviorBus.dispatchEvent(event);
+        }, JSON.stringify(event.detail));
+    }
+}, {behavior_name: 'PuppeteerBusToWindowBusForwarder'});
+```
+
+For the full linking code, see here:
+
+- `src/example_puppeteer_driver.js: linkPuppeteerBusToWindowBus(...)` 
+- `src/example_puppeteer_driver.js: linkPuppeteerBusToServiceWorkerBus(...)` 
+
+<br/>
+
+---
+
+<br/>
+
+## `BehaviorEvent`
+
+```javascript
+const event = {
+    type: 'PAGE_LOAD',
+    metadata: {
+        id: uuid4(),
+        timestamp: Date.now(),
+        path: ['PuppeteerBehaviorBus', 'WindowBehaviorBus'],
+    }
+    ...detail,
+}
+```
+This is also equivalent, and provides some nice validation/type checking:
+```javascript
+const event = new BehaviorEvent(
+    'PAGE_LOAD',
+    {url},
+    {path: ['PuppeteerBehaviorBus']},
+)
+```
+
+### `BehaviorEvent` Usage
+
+Events can be dispatched by calling `BehaviorBus.emit({type: 'EVENT_TYPE', ...})` from any context:
+```javascript
+// example: dispatch an event to the event bus immediately
+BehaviorBus.emit({type: 'PAGE_LOAD', url: window.location.href})
+
+// equivalent:
+BehaviorBus.emit(new BehaviorEvent('PAGE_LOAD', {url: window.location.href}))
+```
+
+<br/>
+
 
 ---
 
@@ -210,95 +342,3 @@ $ node ./example_puppeteer_driver.js
 <br/>
 
 ---
-
-<br/>
-
-## `BehaviorBus`
-
-`BehaviorBus` extends [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) and is a simple event bus that can consumer/emit events and dispatch event listener callbacks.  
-`BehaviorEvent` extends [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent), both work just like the normal DOM event system.
-
-Event listeners attached by `BehaviorBus.attachBehaviors([...])` look like this:
-```javascript
-// example: listen for PAGE_LOAD event, look for URLs on the page, and emit a DISCOVERED_URL event for each
-BehaviorBus.on('PAGE_LOAD', async (event, BehaviorBus, window) => {
-    for (const elem of window.document.querySelector('a[href]')) {
-        BehaviorBus.dispatch({type: 'DISCOVERED_OUTLINK', url: elem.href})
-    }
-})
-```
-
-```javascript
-// example: listen for *all* events on the BehaviorBus and log them to console
-BehaviorBus.on('*', (event, BehaviorBus, window) => {
-    console.log(`[window] -> [LOG] : ${JSON.stringify(event)}`);
-}, {behavior_name: BehaviorBus.name});
-```
-
-### `BehaviorBus` Usage
-
-A new `BehaviorBus` is set up for each context as soon as page loading starts.
-```javascript
-window.location.href = 'https://example.com'
-window.BehaviorBus = new WindowBehaviorBus(window.BEHAVIORS, window);
-```
-
-Events can be dispatched by calling `BehaviorBus.emit({type: 'EVENT_TYPE', ...})`:
-```javascript
-// example: dispatch an event to the event bus immediately
-BehaviorBus.emit({type: 'PAGE_LOAD', url: window.location.href})
-//   OR equivalent:
-BehaviorBus.emit(new BehaviorEvent('PAGE_LOAD', {url: window.location.href}))
-```
-```javascript
-// these methods are all the same, they are just aliases of each other
-BehaviorBus.dispatch(event) == BehaviorBus.dispatchEvent(event) == BehaviorBus.emit(event)
-BehaviorBus.addEventListener(event_name, handler, options) == BehaviorBus.on(event_name, handler, options)
-```
-
-See `src/event_bus.js` for the full implementation.
-
-<br/>
-
-### How `BehaviorBus` instances get connected
-
-`BehaviorBus` instances are typically linked together so that events emitted by one get sent to all the others.  
-  
-Drivers set this up before a page is first loaded so that behavior code running in any context can coordinate
-across all the contexts available to the driver. e.g. a behavior hook running inside a page on `WindowBehaviorBus` can
-emit an event that triggers a hook it defined on the `PuppeteerBehaviorBus`. This means `BehaviorEvent`s will "jailbreak"
-out of a page's typically isolated context and propagate up to a parent puppeteer context, and vice versa.
-
-```javascript
-// set up forwarding from WindowBehaviorBus -> PuppeteerBehaviorBus
-await page.exposeFunction('dispatchEventToPuppeteerBus', (event) => PuppeteerBehaviorBus.dispatchEvent(event));
-await page.evaluate(() => {
-    window.BehaviorBus.addEventListener('*', (event) => {
-        // if the event didn't come from the PuppeteerBehaviorBus already, forward it to them
-        if (!event.detail.metadata.path.includes('PuppeteerBehaviorBus')) {
-            console.log(`[window] -> [puppeteer]: ${JSON.stringify(event)}`);
-            window.dispatchEventToPuppeteerBus(event.detail)
-        }
-    }, {behavior_name: 'WindowBusToPuppeteerBusForwarder'});
-});
-```
-```javascript
-// set up forwarding from PuppeteerBehaviorBus -> WindowBehaviorBus
-PuppeteerBehaviorBus.addEventListener('*', (event) => {
-    event = new BehaviorEvent(event);
-
-    // if the event didn't come from the WindowBehaviorBus already, forward it to them
-    if (!event.detail.metadata.path.includes('WindowBehaviorBus')) {
-        console.log(`[puppeteer] -> [window]: ${JSON.stringify(event.detail)}`);
-        page.evaluate((event) => {
-            event = new BehaviorEvent(JSON.parse(event));
-            window.BehaviorBus.dispatchEvent(event);
-        }, JSON.stringify(event.detail));
-    }
-}, {behavior_name: 'PuppeteerBusToWindowBusForwarder'});
-```
-
-For the full linking code, see here:
-
-- `src/example_puppeteer_driver.js: linkPuppeteerBusToWindowBus(...)` 
-- `src/example_puppeteer_driver.js: linkPuppeteerBusToServiceWorkerBus(...)` 
