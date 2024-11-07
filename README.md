@@ -2,10 +2,10 @@
 
 > <img src="https://github.com/user-attachments/assets/9a504dab-07f0-47bb-bbe6-46e5be9949a4" width="60px"/> &nbsp; &nbsp; &nbsp; &nbsp; <img src="https://github.com/user-attachments/assets/23a03894-6c0b-47e3-b90b-c5b1067d92f7" width="60px"/> &nbsp; &nbsp; &nbsp; &nbsp; <img src="https://github.com/user-attachments/assets/cf28c807-e7b7-4c29-ba1e-9cc73ab557a4" width="60px"/> &nbsp; &nbsp; &nbsp; &nbsp; <img src="https://github.com/user-attachments/assets/ed13a5f9-8ccb-46d6-83be-2f4290ccee4a" width="60px"/> &nbsp; &nbsp; &nbsp; &nbsp; <img src="https://github.com/user-attachments/assets/064d5912-61be-409e-b0c4-70b689fbd2a0" width="60px"/> &nbsp; &nbsp; &nbsp; &nbsp; <img src="https://github.com/user-attachments/assets/46279a32-469d-4810-9eb7-b887f7068261" width="60px"/>  
 
-Spec for browser automation plugins that can be shared between scraping/crawling/archiving tools.  
+Spec for browser automation plugins to be shared between scraping/crawling/archiving tools.  
 Building on the ideas from [`browsertrix-behaviors`](https://github.com/webrecorder/browsertrix-behaviors).
 
-Designed to allow extending browser automation and crawling workflows with custom behavior, using an event-based interface.  
+Designed to allow extending browser automation and crawling workflows with custom behavior, using an event-driven interface.  
 ```javascript
 BehiavorBus.on('PAGE_LOAD', async ({url}, BehaviorBus, window) => ... do something inside window context ...)
 BehiavorBus.on('DISCOVERED_OUTLINK',  async ({url}, BehaviorBus, window) => ... add to pptr crawl queue ...)
