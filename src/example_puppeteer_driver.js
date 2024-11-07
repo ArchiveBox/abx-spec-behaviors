@@ -151,14 +151,14 @@ const crawlInPuppeteer = async (url, behaviors) => {
 
     await linkPuppeteerBusToWindowBus(BehaviorBus, page);
     // await linkPuppeteerBusToServiceWorkerBus(BehaviorBus, browser, 'some-extension-id');
-    BehaviorBus.dispatchEvent(new BehaviorEvent('PAGE_SETUP', {url}, {path: [PuppeteerCrawlDriver.name]}));
+    BehaviorBus.emit(new BehaviorEvent('PAGE_SETUP', {url}, {path: [PuppeteerCrawlDriver.name]}));
 
     await page.waitForSelector('body');
-    BehaviorBus.dispatchEvent(new BehaviorEvent('PAGE_LOAD', {url}, {path: [PuppeteerCrawlDriver.name]}));
+    BehaviorBus.emit(new BehaviorEvent('PAGE_LOAD', {url}, {path: [PuppeteerCrawlDriver.name]}));
     await sleep(5000);
-    BehaviorBus.dispatchEvent(new BehaviorEvent('PAGE_CAPTURE', {url}, {path: [PuppeteerCrawlDriver.name]}));
+    BehaviorBus.emit(new BehaviorEvent('PAGE_CAPTURE', {url}, {path: [PuppeteerCrawlDriver.name]}));
     await sleep(5000);
-    BehaviorBus.dispatchEvent(new BehaviorEvent('PAGE_CAPTURE_COMPLETE', {url}, {path: [PuppeteerCrawlDriver.name]}));
+    BehaviorBus.emit(new BehaviorEvent('PAGE_CAPTURE_COMPLETE', {url}, {path: [PuppeteerCrawlDriver.name]}));
     await sleep(2000);
     
     // await page.close();
