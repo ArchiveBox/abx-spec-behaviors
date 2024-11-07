@@ -146,7 +146,7 @@ const crawlInPuppeteer = async (url, behaviors) => {
     const page = await browser.newPage();
     
     const navigationPromise = page.goto(url);
-    const BehaviorBus = new PuppeteerBehaviorBus(behaviors, page);
+    const BehaviorBus = new PuppeteerBehaviorBus([PuppeteerCrawlDriver, ...behaviors], page);
     await navigationPromise;
 
     await linkPuppeteerBusToWindowBus(BehaviorBus, page);
