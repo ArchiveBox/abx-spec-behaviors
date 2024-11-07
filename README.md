@@ -42,37 +42,40 @@ const DiscoverOutlinks = {
 
     hooks: {
         window: {
-            // PAGE_SETUP: ...
-            // PAGE_LOAD: ...
-
             PAGE_CAPTURE: async (event, BehaviorBus, window) => {
                 for (const url of DiscoverOutlinks.findOutlinkURLs(window.document.body)) {
                     BehaviorBus.emit({type: 'DISCOVERED_OUTLINK', url})
                     BehaviorBus.emit({type: 'FS_WRITE_FILE', path: 'outlinks.txt', mode: 'append', content: url + '\n'})
                 }
             },
-
-            // PAGE_CAPTURE_COMPLETE: ...
         },
-
-     // puppeteer: ...
-     // serviceworker: ...
     },
 }
+```
+```javascript
 class ExtractArticleText {
     name: 'ExtractArticleText',
     schema: 'BehaviorSchema@0.1.0',
     hooks: {
         window: {
+            // PAGE_SETUP: ...
+            // PAGE_LOAD: ...
+
             PAGE_CAPTURE: async (event, BehaviorBus, window) => {
                  const article_text = window.document.body.innerText
                  BehaviorBus.emit({type: 'DISCOVERED_TEXT', selector: 'body', text: article_text})
                  BehaviorBus.emit({type: 'FS_WRITE_FILE', path: 'article.txt', content: article_text})
             },
+         // PAGE_CAPTURE_COMPLETE: ...
         },
+     // puppeteer: ...
+     // serviceworker: ...
     },
 }
+```
 
+`Behaviors` are used as part of a crawl process implemented by a `Behavior Driver`:
+```javascript
 await crawlInBrowser('https://example.com', [ExtractArticleText, DiscoverOutlinks])
 // OR
 await crawlInPuppeteer('https://example.com', [ExtractArticleText, DiscoverOutlinks])
