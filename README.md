@@ -23,7 +23,7 @@ It's one step up from TamperMonkey, with the ability to define event listeners f
 - [`BehaviorEvent`](#behaviorevent): an event `{type: 'PAGE_LOAD', url}` that goes through a `BehaviorBus`
 - [`BehaviorDriver`](#behaviordriver): navigates to URLs, sets up `BehaviorBus` instances for browser/puppeteer/extensions, registers all the `Behavior` event listeners, and fires main crawl lifecycle events 
 
-**Dependencies:** *None*, relies only on JS standard library `EventTarget` which is native in both browser and Node.  
+**Dependencies:** *None*, uses JS standard library `EventTarget` system which is native in both browser and Node.  
 **Easy to Use:** all-in-one script, just import [`behaviors.js`](https://github.com/ArchiveBox/abx-spec-behaviors/blob/main/src/behaviors.js), &lt; 500 lines total
 
 ## Goals
