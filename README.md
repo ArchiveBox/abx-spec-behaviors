@@ -129,7 +129,7 @@ classDiagram
     
     BaseBehaviorBus --> BehaviorEvent : emits/consumes
     Behavior --> BaseBehaviorBus : emits events
-    BehaviorDriver --> BaseBehaviorBus : initializes
+    BehaviorDriver --> BaseBehaviorBus : initializes, sends events to
     BaseBehaviorBus --> Behavior : executes hooks
 ```
 
