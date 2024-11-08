@@ -128,7 +128,7 @@ classDiagram
     BaseBehaviorBus <|-- ServiceWorkerBehaviorBus
     
     BaseBehaviorBus --> BehaviorEvent : emits/consumes
-    Behavior --> BaseBehaviorBus : registers hooks
+    Behavior --> BaseBehaviorBus : emits events
     BehaviorDriver --> BaseBehaviorBus : initializes
     BaseBehaviorBus --> Behavior : executes hooks
 ```
