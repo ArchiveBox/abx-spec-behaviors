@@ -12,7 +12,7 @@ BehiavorBus.on('DISCOVERED_VIDEO',  async (...) => ... extract subtitles and com
 BehiavorBus.on('DISCOVERED_OUTLINK',  async (...) => ... add it to crawl queue  ...)
 ```
 
-It's one step up from TamperMonkey, with the ability to define event listeners for `window` events, puppeteer lifecycle events, service worker / browser extension events, and other events implemented by `CrawlDriver`s.
+It's one step up from TamperMonkey, with the ability to define event listeners for `window` events, puppeteer lifecycle events, service worker / browser extension events, and other events that your tool chooses to dispatch.
 
 **Key Concepts:**
 
