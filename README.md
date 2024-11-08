@@ -214,7 +214,7 @@ const DiscoverOutlinks = {
 }
 ```
 
-To see more example behaviors, check out: [`src/example_behaviors.js`](https://github.com/ArchiveBox/behaviors-spec/blob/main/src/example_behaviors.js).
+To see more example behaviors, check out: [`src/example_behaviors.js`](https://github.com/ArchiveBox/behaviors-spec/blob/main/src/example_behaviors.js) and [`behaviors/`](https://github.com/ArchiveBox/abx-spec-behaviors/tree/main/behaviors).
 
 
 <br/>
