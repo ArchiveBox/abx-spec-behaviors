@@ -127,9 +127,9 @@ classDiagram
     BaseBehaviorBus <|-- PuppeteerBehaviorBus 
     BaseBehaviorBus <|-- ServiceWorkerBehaviorBus
     
-    BaseBehaviorBus --> BehaviorEvent : dispatches
-    Behavior --> BaseBehaviorBus : attaches to
-    BehaviorDriver --> BaseBehaviorBus : implements
+    BaseBehaviorBus --> BehaviorEvent : emits/consumes
+    Behavior --> BaseBehaviorBus : registers hooks
+    BehaviorDriver --> BaseBehaviorBus : initializes
     BaseBehaviorBus --> Behavior : executes hooks
 ```
 
