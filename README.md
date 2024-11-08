@@ -354,6 +354,7 @@ console.log(event.detail)
 }
 ```
 
+
 ### `BehaviorEvent` Usage
 
 Events can be dispatched by calling `BehaviorBus.emit({type: 'EVENT_TYPE', ...})` from any context:
@@ -366,6 +367,98 @@ BehaviorBus.emit(new BehaviorEvent('PAGE_LOAD', {url: window.location.href}))
 ```
 
 <br/>
+
+### Common Event Types
+
+Each event should include relevant context in its payload such as timestamps, URLs, element selectors, file paths, etc. However events can contain plain JSON-serilizable values only, don't put raw DOM element handles into events.
+
+Event type names follow these principles:
+1. Use existing DOM event names where applicable
+2. Use NOUN + present tense VERB pattern for events typically fired by driver, that hooks react to (e.g., `PAGE_SETUP`, `PAGE_LOAD`, `PAGE_CHANGE`, `PAGE_CLOSE`)
+3. Use past tense VERB + NOUN pattern e.g. `DISCOVERED_VIDEO` or `EXTRACTED_VIDEO` when a Behavior is reporting a content discovery or extraction it made
+4. Include `_COMPLETE` suffix for events that report the ending of a process
+5. Include `_ERROR` suffix for error variants of events
+
+#### Page Lifecycle Events
+
+A driver striving to be feature-complete should emit all these lifecycle events to the `BehaviorBus` at the correct times, however it is not required for it to emit all of them.  
+A simple driver may only emit `PAGE_LOAD` for example, but it would miss out on any more complex `Behavior` plugin functionality that might depended on `PAGE_SETUP`.
+
+- `PAGE_SETUP`: Fired when page navigation starts but before DOM is ready (equivalent to `document.readystate = 'loading'`)
+- `DOM_CONTENT_LOADED`: Fired when initial HTML is loaded and parsed (maps directly to DOM event)
+- `PAGE_LOAD`: Fired when page has finished loading including images/styles (equivalent to `window.onload`)
+- `PAGE_IDLE`: Fired when page has been idle with no network activity for 2+ seconds
+- `PAGE_CAPTURE`: Fired when it's time to extract content/take snapshots of the page
+- `PAGE_CAPTURE_COMPLETE`: Fired when all capture/extraction operations are finished
+- `PAGE_BEFORE_UNLOAD`: Fired before page is about to be unloaded (maps to `window.onbeforeunload`)
+- `PAGE_UNLOAD`: Fired when page is being unloaded (maps to `window.onunload`)
+
+#### File System Events
+
+A driver that expects `Behaviors` (e.g. `ExtractArticleText`) to output files to the filesystem
+needs to listen for these events and provide implementations for them. e.g. if you're in node
+you could handle `FS_WRITE_FILE` by calling `fs.writeFileSync(event.path, event.content)`, but
+if you are running `Behaviors` from a browser you may need to use OPFS instead.
+
+- **`FS_WRITE_FILE`:** Fired when a `Behavior` is requesting to write a file
+- `FS_MAKE_DIR`: Fired when requesting to create a directory (optional)
+- `FS_DELETE_FILE`: Fired when requesting to delete a file (optional)
+- `FS_REMOVE_DIR`: Fired when requesting to remove a directory (optional)
+
+#### AI/LLM/External API Events
+
+A driver could choose to implement these if it wants to allow `Behaviors` to use LLM APIs to do things. Behaviors should do LLM logic using these events, as then they be used with any LLM backend of the driver's choosing. Behaviors then won't have to hardcode their own internal logic to make calls to Open AI or Anthropic's APIs, and it makes it easier to swap in and out models depending on context.
+
+- `LLM_REQUEST`: Fired when a Behavior wants to call whatever AI/LLM API might be provided by the driver
+- `LLM_REQUEST_COMPLET`: Fired when AI/LLM processing completes
+- `LLM_REQUEST_ERROR`: Fired when AI/LLM processing fails
+- `... you coordinate other custom event types for your own private APIs too ...`
+
+#### Content Discovery Events
+
+Behaviors working with these types of content should emit these events when they discover relevant content on the page.
+You might have a `Behavior` that scans `<a href>` links on the page, have it emit `DISCOVERED_OUTLINK` for each one it finds.
+Then if your driver wants to do recursiving crawling, it could listen for `DISCOVERED_OUTLINK` events on the `BehaviorBus`, ]
+and add the URLs any `Behavior` discovers to its crawl queue.
+
+- `DISCOVERED_OUTLINK`: Fired when a new URL is found that could be crawled
+- `DISCOVERED_IMAGE`: Fired when an image resource is found
+- `DISCOVERED_VIDEO`: Fired when a video resource is found
+- `DISCOVERED_AUDIO`: Fired when an audio resource is found
+- `DISCOVERED_DOWNLOAD`: Fired when a download link (ZIP/PDF/DOC/EXE/etc.) is found
+- `DISCOVERED_FEED`: Fired when an RSS/Atom feed is found
+- `DISCOVERED_API`: Fired when an API endpoint is found
+- `DISCOVERED_FORM`: Fired when an interactive form is found
+- `DISCOVERED_TEXT`: Fired when significant text content is found
+
+#### Content Extraction Events
+
+When content has been extracted out of a page and saved as a file somewhere.
+
+- `EXTRACTED_METADATA`: Fired when page metadata has been collected
+- `EXTRACTED_SCREENSHOT`: Fired when a screenshot has been taken
+- `EXTRACTED_PDF`: Fired when a PDF has been generated
+- `EXTRACTED_WARC`: Fired when an archive file has been created
+
+#### Human Behavior Emulation Events
+
+Behaviors can choose to emit these when emulating user stpes on a page / listen for them being emitted from other behaviors.  
+These events don't do anything on their own and are not required, it's just recommended to announce these to make it easier for other
+plugins to listen for changes and coordinate their own logic.
+
+- `SCROLL`: Announce whenver a page's croll position is changed
+- `SCROLL_COMPLETE`: Fired when a sequence of scroll operations is finished
+- `FORM_SUBMIT`: Fired when attempting to submit a form
+- `FORM_SUBMIT_COMPLETE`: Fired when form submission is finished
+- `CLICK`: Fired when programmatically clicking an element
+- `HOVER`: Fired when programmatically hovering over an element
+- `INPUT`: Fired when programmatically entering text into a field
+- `INPUT_COMPLETE`: Fired when a sequence of text input operations is finished
+- `DIALOG_OPEN`: Fired when a modal/dialog opens
+- `DIALOG_CLOSE`: Fired when a modal/dialog closes
+
+<br/>
+
 
 
 ---
