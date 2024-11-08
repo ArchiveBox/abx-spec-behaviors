@@ -81,6 +81,58 @@ node src/example_puppeteer_driver.js
 
 ---
 
+```mermaid
+classDiagram
+    class BehaviorEvent {
+        +type: string
+        +metadata: object
+        +validate()
+    }
+    
+    class BaseBehaviorBus {
+        +context: object
+        +behaviors: array
+        +attachContext(context)
+        +attachBehaviors(behaviors)
+        +addEventListener(type, handler)
+        +dispatchEvent(event)
+    }
+    
+    class WindowBehaviorBus {
+        +name: "WindowBehaviorBus"
+    }
+    
+    class PuppeteerBehaviorBus {
+        +name: "PuppeteerBehaviorBus"
+    }
+    
+    class ServiceWorkerBehaviorBus {
+        +name: "ServiceWorkerBehaviorBus" 
+    }
+    
+    class Behavior {
+        +name: string
+        +schema: string
+        +hooks: object
+    }
+    
+    class BehaviorDriver {
+        +name: string
+        +schema: string
+        +state: object
+        +hooks: object
+    }
+
+    BaseBehaviorBus <|-- WindowBehaviorBus
+    BaseBehaviorBus <|-- PuppeteerBehaviorBus 
+    BaseBehaviorBus <|-- ServiceWorkerBehaviorBus
+    
+    BaseBehaviorBus --> BehaviorEvent : dispatches
+    Behavior --> BaseBehaviorBus : attaches to
+    BehaviorDriver --> BaseBehaviorBus : implements
+    BaseBehaviorBus --> Behavior : executes hooks
+```
+
 ## `Behavior`
 
 Behaviors are what this whole proposal is about. A `Behavior` is sharable bundle of hook methods that will run in the context of a page during crawling.
