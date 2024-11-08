@@ -83,6 +83,21 @@ node src/example_puppeteer_driver.js
 
 ## `Behavior`
 
+Behaviors are what this whole proposal is about. A `Behavior` is sharable bundle of hook methods that will run in the context of a page during crawling.
+
+A simple `Behavior` like `HideModalsBehavior` might only provide a single `browser: PAGE_LOAD` that deletes `div.modal` elements after page load is complete.
+
+A more complex behavior like `ExpandComments` provide a `browser: PAGE_LOAD` hook that `<details>` elements in the body, but it also provides extra `puppeteer: PAGE_LOAD` hook that will run if you have puppeteer available, and it uses puppeter's extra powers (e.g. `$$('pierce/...`) to expand comments inside iframes and nested shadow DOM roots.
+
+If we all agree to use a simple spec like this then we all get access to a community-maintained pool of "Behaviors" just by sharing Github repos. You can build a fancy app store style interface in your own tool and just populate it with all Github repos tagged with `abx-spec-behaviors` + `yourtoolname`. Different crawling tools can implement the hooks you care about, dispatch a few events on `BehaviorBus` during their crawling lifecycle, and `BehaviorBus` runs the `Behaviors` you want it to. You get opt-in plugin functionality for free based on the events you fire, and you don't have to modify your own tool at all. 
+
+You can be minimalist and only fire `PAGE_LOAD` if you don't want your crawling tool offer a big surface area to `Behavior` scripts, or if you want all the functionality plugins have to offer, you can fire all the lifcycle events like `PAGE_SETUP` `PAGE_CAPTURE` `PAGE_CLOSE`, etc.
+
+Not all the crawling tools provide all the same APIs, so `hooks` within a `Behavior` plugin are organized by the context they depend on.
+We provide a `BehaviorBus` available across all contexts, and your tool can dispatch the events it cares about in each.
+
+Your tool can choose what `hooks` it would like to load within a `Behavior` based on what execution contexts you want to provide to the plugins (e.g. `browser` means you can run JS inside the context of a browser with `globalThis == window`, `puppeteer` means you have puppeteer available with `page` and `browser`.
+
 ### `Behavior` Usage
 
 `Behaviors` are used as part of a crawl process implemented by a [`BehaviorDriver`](#behaviordriver):
