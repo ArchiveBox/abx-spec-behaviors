@@ -6,7 +6,7 @@ const DiscoverOutlinksBehavior = {
     schema: 'BehaviorSchema@0.1.0',
     name: 'DiscoverOutlinksBehavior',
     hooks: {
-        WindowBehaviorBus: {
+        window: {
             // '*': async (event, BehaviorBus, window) => {
             //     console.log(`[window] -> [DiscoverOutlinksBehavior] ${JSON.stringify(event)}`);
             // },
@@ -21,7 +21,7 @@ const DiscoverOutlinksBehavior = {
                 // browsertrix driver itself would also listen for this event and use it to add add URLs to the crawl queue
             }
         },
-        PuppeteerBehaviorBus: {
+        puppeteer: {
             // '*': async (event, BehaviorBus, page) => {
             //     console.log(`[puppeteer] -> [DiscoverOutlinksBehavior] ${JSON.stringify(event)}`);
             // },
@@ -48,7 +48,7 @@ const ExtractArticleTextBehavior = {
     schema: 'BehaviorSchema@0.1.0',
     name: 'ExtractArticleTextBehavior',
     hooks: {
-        WindowBehaviorBus: {
+        window: {
             // '*': async (event, BehaviorBus, window) => {
             //     console.log(`[window] -> [ExtractArticleTextBehavior] ${JSON.stringify(event)}`);
             // },
@@ -84,7 +84,7 @@ const ExpandCommentsBehavior = {
     },
 
     hooks: {
-        WindowBehaviorBus: {
+        window: {
             // '*': async (event, BehaviorBus, window) => {
             //     console.log(`[window] -> [ExpandCommentsBehavior] ${JSON.stringify(event)}`);
             // },
@@ -99,7 +99,7 @@ const ExpandCommentsBehavior = {
                 }
             }
         },
-        PuppeteerBehaviorBus: {
+        puppeteer: {
             // '*': async (event, BehaviorBus, page) => {
             //     console.log(`[puppeteer] -> [ExpandCommentsBehavior] ${JSON.stringify(event)}`);
             // },
