@@ -58,11 +58,6 @@ const HideModalsBehavior = {
                     '[class*="subscribe"]',
                     '[id*="subscribe"]',
                     
-                    // Generic Fixed Position Elements (Often Modals/Popups)
-                    'div[style*="position: fixed"]',
-                    'div[style*="position:fixed"]',
-                    'div[class*="fixed"]',
-                    
                     // Site-Specific Common Selectors
                     '.fc-consent-root',                // Funding Choices consent
                     '.qc-cmp2-container',             // Quantcast consent
@@ -90,60 +85,23 @@ const HideModalsBehavior = {
                 ];
 
                 // First pass: immediate removal
-                const removed = HideModalsBehavior.findAndRemoveElements(modalSelectors);
-                
-                if (removed.length) {
-                    BehaviorBus.emit({
-                        type: 'MODALS_REMOVED',
-                        count: removed.length,
-                        removedElements: removed
-                    });
-                }
+                HideModalsBehavior.findAndRemoveElements(modalSelectors);
 
                 // Second pass: delayed removal for lazy-loaded modals
                 setTimeout(() => {
-                    const removedDelayed = HideModalsBehavior.findAndRemoveElements(modalSelectors);
-                    if (removedDelayed.length) {
-                        BehaviorBus.emit({
-                            type: 'MODALS_REMOVED_DELAYED',
-                            count: removedDelayed.length,
-                            removedElements: removedDelayed
-                        });
-                    }
+                    HideModalsBehavior.findAndRemoveElements(modalSelectors);
                 }, 2000);
 
                 // Monitor for dynamically added modals
                 const observer = new MutationObserver((mutations) => {
-                    const removedDynamic = HideModalsBehavior.findAndRemoveElements(modalSelectors);
-                    if (removedDynamic.length) {
-                        BehaviorBus.emit({
-                            type: 'MODALS_REMOVED_DYNAMIC',
-                            count: removedDynamic.length,
-                            removedElements: removedDynamic
-                        });
-                    }
+                    HideModalsBehavior.findAndRemoveElements(modalSelectors);
                 });
 
                 observer.observe(document.body, {
                     childList: true,
                     subtree: true
                 });
-
-                // Clean up observer after 10 seconds
-                setTimeout(() => {
-                    observer.disconnect();
-                    BehaviorBus.emit({
-                        type: 'MODAL_OBSERVATION_COMPLETE',
-                        url: window.location.href
-                    });
-                }, 10000);
             },
-
-            PAGE_BEFORE_UNLOAD: (event, BehaviorBus, window) => {
-                // Some sites redirect if you block their modal, override that
-                window.onbeforeunload = null;
-                window.onunload = null;
-            }
         }
     }
 };
