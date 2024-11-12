@@ -162,11 +162,10 @@ If we all agree to use a minimal shared [event spec](#page-lifecycle-events) lik
 
 You can be minimalist and only fire `PAGE_LOAD` if you don't want your crawling tool offer a big surface area to `Behavior` scripts, or if you want all the functionality plugins have to offer, you can fire [all the lifcycle events](#page-lifecycle-events) like `PAGE_SETUP` `PAGE_CAPTURE` `PAGE_CLOSE`, etc.
 
-Not all the crawling tools provide all the same APIs, so `hooks` within a `Behavior` plugin are organized by the context they depend on.
-We provide a `BehaviorBus` available across all contexts, and your tool can dispatch the events it cares about in each.
+Different browser automation environments provide different APIs to access the page during crawling. We expect *all* environments to provide `window`, but we also provide `BehaviorBus` implementations for other contexts like `puppeteer`'s `page`, or `serviceworker`'s `window`, `playwright`, and more.  
+When `Behavior` define `hooks` methods, they are grouped by the name of the context they expect (e.g. `window`), allowing them to fine-tune operation based on execution environment.
 
-Your tool can choose what `hooks` it would like to load within a `Behavior` based on what execution contexts you want to provide to the plugins (e.g. `browser` means you can run JS inside the context of a browser with `globalThis == window`, `puppeteer` means you have puppeteer available with `page` and `browser`.
-
+Your crawling code should set up a `BehaviorBus` for each context you have available (e.g. `window`, `puppeteer`'s `page` object, etc.), then you attach the `Behavior`s you want to run, link the `BehaviorBus` instances together (`linkPuppeteerBusToWindowBus`), and fire the [main lifecycle events](#page-lifecycle-events).
 
 ### `Behavior` Usage
 
