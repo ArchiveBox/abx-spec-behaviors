@@ -22,6 +22,7 @@ const ScrollDownBehavior = {
             window.scrollTo({top: 1400, behavior: 'smooth'})   // scroll the page down by 1400px
             setTimeout(() => {                                 // wait 2s, then scroll back up
                 window.scrollTo({top: 0, behavior: 'smooth'})
+                document.querySelector('#loading-indicator').remove()  // can modify the DOM too
                 BehaviorBus.emit({type: 'SCROLL_COMPLETE'})
             }, 2000)
         },
