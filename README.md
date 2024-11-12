@@ -85,51 +85,36 @@ node src/example_puppeteer_driver.js
 classDiagram
     class BehaviorEvent {
         +type: string
+        +detail: object
         +metadata: object
-        +validate()
     }
     
     class BaseBehaviorBus {
         +context: object
-        +behaviors: array
+        +behaviors: Behavior[]
         +attachContext(context)
         +attachBehaviors(behaviors)
-        +addEventListener(type, handler)
-        +dispatchEvent(event)
-    }
-    
-    class WindowBehaviorBus {
-        +name: "WindowBehaviorBus"
-    }
-    
-    class PuppeteerBehaviorBus {
-        +name: "PuppeteerBehaviorBus"
-    }
-    
-    class ServiceWorkerBehaviorBus {
-        +name: "ServiceWorkerBehaviorBus" 
+        +on(type: string, handler: Function)
+        +emit(event: BehaviorEvent | object)
     }
     
     class Behavior {
         +name: string
         +schema: string
+        +state: object?
         +hooks: object
     }
     
     class BehaviorDriver {
         +name: string
         +schema: string
-        +state: object
+        +state: object?
         +hooks: object
     }
-
-    BaseBehaviorBus <|-- WindowBehaviorBus
-    BaseBehaviorBus <|-- PuppeteerBehaviorBus 
-    BaseBehaviorBus <|-- ServiceWorkerBehaviorBus
     
-    BaseBehaviorBus --> BehaviorEvent : emits/consumes
+
     Behavior --> BaseBehaviorBus : emits events
-    BehaviorDriver --> BaseBehaviorBus : initializes, sends events to
+    BehaviorDriver --> BaseBehaviorBus : initializes, sends main events to
     BaseBehaviorBus --> Behavior : executes hooks
 ```
 
@@ -143,6 +128,9 @@ A more complex behavior like `ExpandComments` might provide a `browser: PAGE_LOA
 
 If we all agree to use a minimal shared event spec like this then can we all share the benefit of community-maintained pools of "Behaviors" organically on Github. You can build a fancy app store style interface in your own tool and just populate it with all Github repos tagged with `abx-spec-behaviors` + `yourtoolname`. Different crawling tools can implement the hooks you care about, dispatch a few events on `BehaviorBus` during their crawling lifecycle, and `BehaviorBus` runs the `Behaviors` you want it to. You get opt-in plugin functionality for free based on the events you fire, and you don't have to modify your own tool at all. 
 
+> [!TIP]
+> Almost all `Behavior`s will only need a single `PAGE_LOAD` or `PAGE_CAPTURE` method to implement their functionality (under the `window` context). Hooks for other contexts are only to be used when a `Behavior` author wants to provide some extra bonus functionality for specific contexts (e.g. `puppeteer`, `serviceworker`, etc.).
+
 **This Spec is A-La-Carte**
 
 You can be minimalist and only fire `PAGE_LOAD` if you don't want your crawling tool offer a big surface area to `Behavior` scripts, or if you want all the functionality plugins have to offer, you can fire all the lifcycle events like `PAGE_SETUP` `PAGE_CAPTURE` `PAGE_CLOSE`, etc.
@@ -151,6 +139,7 @@ Not all the crawling tools provide all the same APIs, so `hooks` within a `Behav
 We provide a `BehaviorBus` available across all contexts, and your tool can dispatch the events it cares about in each.
 
 Your tool can choose what `hooks` it would like to load within a `Behavior` based on what execution contexts you want to provide to the plugins (e.g. `browser` means you can run JS inside the context of a browser with `globalThis == window`, `puppeteer` means you have puppeteer available with `page` and `browser`.
+
 
 ### `Behavior` Usage
 
@@ -204,6 +193,8 @@ const DiscoverOutlinks = {
             },
          // PAGE_CAPTURE_COMPLETE: ...
         },
+     // cdp: ...
+     // webdriver: ...
      // serviceworker: ...
      // puppeteer: ...
      // playwright: ...
@@ -219,6 +210,37 @@ To see more example behaviors, check out: [`src/example_behaviors.js`](https://g
 
 <br/>
 
+### `Behavior` Composition
+
+If you want to have one behavior depend on the output of another, the second behavior can simply listen for the relevant events emitted by the first one.  
+
+```javascript
+const ScreenshotBehavior = {
+    ...
+    puppeteer: {
+        PAGE_CAPTURE: async (event, BehaviorBus, page) => {
+            await page.screenshot(...);
+            BehaviorBus.emit({type: 'EXTRACTED_SCREENSHOT', path: 'screenshot.png', ...})
+        },
+    }
+}
+
+const SomeBehaviorThatDependsOnScreenshot = {
+    ...
+    puppeteer: {
+        EXTRACTED_SCREENSHOT: async (event, BehaviorBus, page) => {
+            // this fires when any earlier behavior emits EXTRACTED_SCREENSHOT
+            console.log('do something with the screenshot here...', event.path)
+        }
+    }
+}
+```
+
+No API is provided for Behaviors to directly depend on other specific behaviors (e.g. `depends_on: ['SomeOtherBehavior']`), in general trying to do so is discouraged.  
+
+By listening for a more generic event, it allows the users to swap out the `ScreenshotBehavior` for a different screenshot implementation, as long as it emits the same `EXTRACTED_SCREENSHOT` event.  
+This approach of "loose coupling" / [duck typing](https://en.wikipedia.org/wiki/Duck_typing) means the only hard contract between behaviors are the `EVENT_NAME` + args they emit/listen for.  
+This is based on the UNIX philosophy of `Expect the output of every program to become the input to another, as yet unknown, program.`.
 
 ---
 
@@ -585,6 +607,7 @@ $ node ./example_puppeteer_driver.js
 ```
 
 <br/>
+
 
 ---
 
