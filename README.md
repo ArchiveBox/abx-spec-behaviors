@@ -12,7 +12,7 @@ BehiavorBus.on('DISCOVERED_VIDEO',  async (...) => ... extract subtitles and com
 BehiavorBus.on('DISCOVERED_OUTLINK',  async (...) => ... add it to crawl queue  ...)
 ```
 
-It's one step up from TamperMonkey, with the ability to define event listeners for `window` events, puppeteer lifecycle events, service worker / browser extension events, and other events that your tool chooses to dispatch.
+It's one step up from TamperMonkey/Greasemonkey, with the ability to define event listeners for normal `window` DOM events, but also puppeteer lifecycle events, service worker / browser extension events, and other events that your crawling environment may choose to dispatch.
 
 **Key Concepts:**
 
@@ -31,7 +31,17 @@ It's one step up from TamperMonkey, with the ability to define event listeners f
 
 ## Goals
 
-To create an inter-operable spec for plugins that many scraper and digital archiving projects can share.
+> To create an inter-operable spec for browser scripts that many scraping and digital archiving projects can share.
+
+A lot of crawling/scaping projects have to suffer with massive duplication of effort right now. Everyone has to hide the same popups / ads / log into sites / get around CAPTCHAs / expand comments / etc.  
+Most projects today have to manually implement their own scripts for every site they want to scrape, and there's no way to *share* those scripts consistently.
+
+[Greasemonkey](https://en.wikipedia.org/wiki/Greasemonkey) grew into a huge [community](https://github.com/awesome-scripts/awesome-userscripts) because their very [very simple spec](https://hayageek.com/greasemonkey-tutorial/#hello-world) allows anyone to quickly write a function and [share it with others](https://greasyfork.org/en), even if they're using a different extension to run it (e.g. [Tampermonkey](https://www.tampermonkey.net/), [ViolentMonkey](https://violentmonkey.github.io/), FireBug, etc.).  
+  
+This `Behavior` spec proposal aims to do something similar, but for slightly more powerful user scripts that can leverage `puppeteer`, `playwright`, and other crawling & scraping driver APIs.
+
+> If a company wanted to scrape Reddit threads using `playwright` today, they would probably Google `reddit playwright`, attempt to copy/paste bits of other people's functions, and likely end up writing a lot of their own `playwright` code to scroll pages, wait for lazy loading, expand comments, extract JSON, etc.  
+> Instead, imagine if a simple Github search for `reddit topic:abx-behavior` yielded a bunch of community-mainted, spec-compliant `reddit` scripts, ready to run with any driver library (`puppeteer`/`playwright`/`webdriver`/etc.).
 
 #### Use Cases
 
@@ -49,7 +59,7 @@ Here are some examples of things that could be implemented as behaviors and shar
 - `send some page content to an LLM with a prompt and store the response`
 - and more...
 
-We're aiming to foster easier collaboration of browser automation snippets like these between:
+We're aiming to foster easier collaboration & sharing of browser automation snippets between communities like these:
 
 #### Toolmakers
 - https://ArchiveBox.io
