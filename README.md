@@ -291,32 +291,34 @@ This is based on the UNIX philosophy of `Expect the output of every program to b
 
 ### `BehaviorBus` Usage
 
-A new `BehaviorBus` is set up for each context by the `BehaviorDriver` as soon as page loading starts.
+A new `BehaviorBus` should be set up for each context as soon as page loading starts.
 ```javascript
+window.BEHAVIORS = [HideModalsBehavior, ExpandCommentsBehavior, ...]
 window.location.href = 'https://example.com'
 window.BehaviorBus = new WindowBehaviorBus(window.BEHAVIORS, window);
 ```
 
 ```javascript
 // these methods are all the same, they are just aliases of each other
-BehaviorBus.dispatch(event) == BehaviorBus.dispatchEvent(event) == BehaviorBus.emit(event)
-BehaviorBus.addEventListener(event_name, handler, options) == BehaviorBus.on(event_name, handler, options)
+BehaviorBus.dispatch(event) === BehaviorBus.dispatchEvent(event) === BehaviorBus.emit(event)
+BehaviorBus.addEventListener(event_name, handler, options) === BehaviorBus.on(event_name, handler, options)
 ```
 
-See `src/event_bus.js` for the full implementation.
+See `src/behaviors.js` for the full implementation.
 
 ### `BehaviorBus` Examples
 
 ```javascript
-global.BehaviorBus = new WindowBehaviorBus(window.BEHAVIORS, window);
-BehaviorBus.attachBehaviors([PuppeteerCrawlDriver])
-BehaviorBus.attachBehaviors(window.BEHAVIORS)
+const BehaviorBus = new WindowBehaviorBus([PuppeteerCrawlDriver, ...window.BEHAVIORS], window);
+// OR equivalent:
+const BehaviorBus = new WindowBehaviorBus()
+BehaviorBus.attachBehaviors([PuppeteerCrawlDriver, ...window.BEHAVIORS])
 BehaviorBus.attachContext(window)
 ```
 
-Event listeners attached by `BehaviorBus.attachBehaviors([...])` look like this:
+`Behavior`s define some event listener hooks, which get attached to the `BehaviorBus` by `BehaviorBus.attachBehaviors([...])`:
 ```javascript
-// example: listen for PAGE_LOAD event, look for URLs on the page, and emit a DISCOVERED_URL event for each
+// example of attaching a PAGE_LOAD event listener manually:
 BehaviorBus.on('PAGE_LOAD', async (event, BehaviorBus, window) => {
     for (const elem of window.document.querySelector('a[href]')) {
         BehaviorBus.emit({type: 'DISCOVERED_OUTLINK', url: elem.href})
@@ -334,12 +336,12 @@ BehaviorBus.on('*', (event, BehaviorBus, window) => {
 ```javascript
 // dispatching an Event
 BehaviorBus.emit({type: 'DISCOVERED_OUTLINK', url})
-// OR
+// OR equivalent:
 BehaviorBus.emit(new BehaviorEvent('DISCOVERED_OUTLINK', {url}))
 ```
 
 
-### How `BehaviorBus` instances get connected
+### How `BehaviorBus` instances get connected across contexts
 
 <details><summary><code>BehaviorBus</code> instances are typically linked together so that events emitted by one get sent to all the others.</summary>
 
