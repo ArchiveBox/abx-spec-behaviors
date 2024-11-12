@@ -433,9 +433,9 @@ BehaviorBus.emit(new BehaviorEvent('PAGE_LOAD', {url: window.location.href}))
 
 ### Common Event Types
 
-Each event should include relevant context in its payload such as timestamps, URLs, element selectors, file paths, etc. However events can contain plain JSON-serilizable values only, don't put raw DOM element handles into events.
+Each event should include relevant context in its payload such as URLs, extracted text, file paths, selectors, etc. Events can contain plain JSON-serilizable values only, don't put raw DOM element handles or special objects like `window` into events.
 
-Event type names follow these principles:
+Event type names (e.g. `PAGE_LOAD`) should follow these principles:
 1. Use existing DOM event names where applicable
 2. Use NOUN + present tense VERB pattern for events typically fired by driver, that hooks react to (e.g., `PAGE_SETUP`, `PAGE_LOAD`, `PAGE_CHANGE`, `PAGE_CLOSE`)
 3. Use past tense VERB + NOUN pattern e.g. `DISCOVERED_VIDEO` or `EXTRACTED_VIDEO` when a Behavior is reporting a content discovery or extraction it made
@@ -449,7 +449,7 @@ A simple driver may only emit `PAGE_LOAD` for example, but it would miss out on 
 
 - `PAGE_SETUP`: Fired when page navigation starts but before DOM is ready (equivalent to `document.readystate = 'loading'`)
 - `DOM_CONTENT_LOADED`: Fired when initial HTML is loaded and parsed (maps directly to DOM event)
-- `PAGE_LOAD`: Fired when page has finished loading including images/styles (equivalent to `window.onload`)
+- **`PAGE_LOAD`**: Fired when page has finished loading including images/styles (equivalent to `window.onload`)
 - `PAGE_IDLE`: Fired when page has been idle with no network activity for 2+ seconds
 - `PAGE_CAPTURE`: Fired when it's time to extract content/take snapshots of the page
 - `PAGE_CAPTURE_COMPLETE`: Fired when all capture/extraction operations are finished
@@ -481,8 +481,8 @@ A driver could choose to implement these if it wants to allow `Behaviors` to use
 
 Behaviors working with these types of content should emit these events when they discover relevant content on the page.
 You might have a `Behavior` that scans `<a href>` links on the page, have it emit `DISCOVERED_OUTLINK` for each one it finds.
-Then if your driver wants to do recursiving crawling, it could listen for `DISCOVERED_OUTLINK` events on the `BehaviorBus`, ]
-and add the URLs any `Behavior` discovers to its crawl queue.
+Then if your driver wants to do recursiving crawling, it could listen for `DISCOVERED_OUTLINK` events on the `BehaviorBus`, 
+and add the reported URLs to its crawl queue.
 
 - `DISCOVERED_OUTLINK`: Fired when a new URL is found that could be crawled
 - `DISCOVERED_IMAGE`: Fired when an image resource is found
