@@ -117,7 +117,7 @@ classDiagram
         +metadata: object
     }
     
-    class BaseBehaviorBus {
+    class BehaviorBus {
         +context: object
         +behaviors: Behavior[]
         +attachContext(context)
@@ -141,9 +141,9 @@ classDiagram
     }
     
 
-    Behavior --> BaseBehaviorBus : emits events
-    BehaviorDriver --> BaseBehaviorBus : initializes, sends main events to
-    BaseBehaviorBus --> Behavior : executes hooks
+    Behavior --> BehaviorBus : emits events
+    BehaviorDriver --> BehaviorBus : initializes, sends main events to
+    BehaviorBus --> Behavior : executes hooks
 ```
 
 ## `Behavior`
