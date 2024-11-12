@@ -106,11 +106,8 @@ class BaseBehaviorBus extends EventTarget {
     async waitUntilReady() {
         const is_ready = (this.context !== null) && (this.behaviors !== null);
         if (is_ready) return;
-
         this._readyPromise = this._readyPromise || new Promise((resolve) => {this._resolveReady = resolve});
-        
-        // Wait for bus to be ready before allowing events
-        await this._readyPromise;
+        await this._readyPromise;   // block until context and behaviors are both attached to bus
     }
 
     _getListenerWithBusAndContextArgsPopulated(handler, behavior_name='UNKNOWN') {
