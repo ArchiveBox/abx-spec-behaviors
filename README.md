@@ -147,7 +147,7 @@ classDiagram
 
 ## `Behavior`
 
-Behaviors are the main focus of this proposal. A `Behavior` is just some hook methods that manipulate a page during crawling.
+Behaviors are the main focus of this proposal. A `Behavior` is a plain JS object containing some metadata fields (`name`, `schema`, `version`, `description`, ...) and some `hooks` (methods that get called to manipulate a page during crawling).
 
 A simple one like `HideModalsBehavior` might only provide a single `window: PAGE_LOAD` hook that deletes any `div.modal` elements from the DOM.
 
