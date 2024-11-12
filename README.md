@@ -15,14 +15,12 @@ const ScrollDownBehavior = {
     name: 'ScrollDownBehavior',
     schema: 'BehaviorSpec@0.1.0',
     version: '1.2.3',
-    description: 'Scroll the page down after it loads to trigger any lazy-loaded content, then scroll back up.',
+    description: 'Scroll the page down to trigger any lazy-loaded content, then scroll back up.',
     documentation: 'https://github.com/example/ScrollDownBehavior',
     hooks: {
         PAGE_LOAD: async (event, BehaviorBus, window) => {
-            // scroll the page down by 1400px
-            window.scrollTo({top: 1400, behavior: 'smooth'})
-            // wait 2s, then scroll back up
-            setTimeout(() => {
+            window.scrollTo({top: 1400, behavior: 'smooth'})   // scroll the page down by 1400px
+            setTimeout(() => {                                 // wait 2s, then scroll back up
                 window.scrollTo({top: 0, behavior: 'smooth'})
                 BehaviorBus.emit({type: 'SCROLL_COMPLETE'})
             }, 2000)
