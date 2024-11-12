@@ -286,8 +286,8 @@ This is based on the UNIX philosophy of `Expect the output of every program to b
 
 ## `BehaviorBus`
 
-`BehaviorBus` extends [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) and is a simple event bus that can consume/emit events + dispatch event listener callbacks.  
-`BehaviorEvent` extends [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent), both are based on the normal DOM event system / standard types and require no extra libraries.
+`BehaviorBus` extends [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) and is a simple event bus that can consume/emit events + trigger event listeners.  
+`BehaviorEvent` extends [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent), both use the native JS event system, no `npm` libs needed.
 
 ### `BehaviorBus` Usage
 
@@ -355,7 +355,7 @@ This means <code>BehaviorEvent</code>s can "jailbreak" out of a page's context a
 <pre lang="javascript"><code>// set up forwarding from WindowBehaviorBus -> PuppeteerBehaviorBus
 await page.exposeFunction('dispatchEventToPuppeteerBus', (event) => PuppeteerBehaviorBus.emit(event));
 await page.evaluate(() => {
-    window.BehaviorBus.addEventListener('*', (event) => {
+    window.BehaviorBus.on('*', (event) => {
         // if the event didn't come from the PuppeteerBehaviorBus already, forward it to them
         if (!event.detail.metadata.path.includes('PuppeteerBehaviorBus')) {
             console.log(`[window] -> [puppeteer]: ${JSON.stringify(event)}`);
@@ -365,7 +365,7 @@ await page.evaluate(() => {
 });
 </code></pre>
 <pre lang="javascript"><code>// set up forwarding from PuppeteerBehaviorBus -> WindowBehaviorBus
-PuppeteerBehaviorBus.addEventListener('*', (event) => {
+PuppeteerBehaviorBus.on('*', (event) => {
     event = new BehaviorEvent(event);
 
     // if the event didn't come from the WindowBehaviorBus already, forward it to them
