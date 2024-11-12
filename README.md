@@ -154,14 +154,14 @@ A simple `Behavior` like `HideModalsBehavior` might only provide a single `brows
 
 A more complex behavior like `ExpandComments` might provide a `browser: PAGE_LOAD` hook that expands `<details>` elements in the body, but it could also provide an extra `puppeteer: PAGE_LOAD` hook that will run if you have puppeteer available. The Behavior is usable whether you're automating via browser extension or headless browser, because you can run it as long as you have `window`, but when puppeter's extra powers (e.g. `$$('pierce/...`) are available, the `Behvior` provides extra functionality that makes it work across shadow DOMs and inside `<iframe>`s.
 
-If we all agree to use a minimal shared event spec like this then can we all share the benefit of community-maintained pools of "Behaviors" organically on Github. You can build a fancy app store style interface in your own tool and just populate it with all Github repos tagged with `abx-spec-behaviors` + `yourtoolname`. Different crawling tools can implement the hooks you care about, dispatch a few events on `BehaviorBus` during their crawling lifecycle, and `BehaviorBus` runs the `Behaviors` you want it to. You get opt-in plugin functionality for free based on the events you fire, and you don't have to modify your own tool at all. 
+If we all agree to use a minimal shared [event spec](#page-lifecycle-events) like this then can we all share the benefit of community-maintained pools of "Behaviors" organically on Github. You can build a fancy app store style interface in your own tool and just populate it with all Github repos tagged with `abx-behavior` + `yourtoolname`. Different crawling tools can implement the hooks you care about, dispatch a few events on `BehaviorBus` during their crawling lifecycle, and `BehaviorBus` runs the `Behaviors` you want it to. You get opt-in plugin functionality for free based on the events you fire, and you don't have to modify your own tool at all. 
 
 > [!TIP]
 > Almost all `Behavior`s will only need a single `PAGE_LOAD` or `PAGE_CAPTURE` method to implement their functionality (under the `window` context). Hooks for other contexts are only to be used when a `Behavior` author wants to provide some extra bonus functionality for specific contexts (e.g. `puppeteer`, `serviceworker`, etc.).
 
 **This Spec is A-La-Carte**
 
-You can be minimalist and only fire `PAGE_LOAD` if you don't want your crawling tool offer a big surface area to `Behavior` scripts, or if you want all the functionality plugins have to offer, you can fire all the lifcycle events like `PAGE_SETUP` `PAGE_CAPTURE` `PAGE_CLOSE`, etc.
+You can be minimalist and only fire `PAGE_LOAD` if you don't want your crawling tool offer a big surface area to `Behavior` scripts, or if you want all the functionality plugins have to offer, you can fire [all the lifcycle events](#page-lifecycle-events) like `PAGE_SETUP` `PAGE_CAPTURE` `PAGE_CLOSE`, etc.
 
 Not all the crawling tools provide all the same APIs, so `hooks` within a `Behavior` plugin are organized by the context they depend on.
 We provide a `BehaviorBus` available across all contexts, and your tool can dispatch the events it cares about in each.
@@ -173,10 +173,24 @@ Your tool can choose what `hooks` it would like to load within a `Behavior` base
 
 `Behaviors` are used as part of a crawl process implemented by a [`BehaviorDriver`](#behaviordriver):
 ```javascript
+// use one of our provided  example driver implementations:
 await crawlInBrowser('https://example.com', [ExtractArticleText, DiscoverOutlinks])
 // OR
 await crawlInPuppeteer('https://example.com', [ExtractArticleText, DiscoverOutlinks])
+
+// OR run Behaviors in your existing crawl flow by setting up a BehaviorBus and firing PAGE_LOAD at the right time, e.g.:
+
+const page = await browser.newPage();
+await page.goto('https://example.com');
+const BehaviorBus = new PuppeteerBehaviorBus();
+BehaviorBus.attachBehaviors([ExtractArticleText, DiscoverOutlinks]);
+BehaviorBus.attachContext(page);
+
+await linkPuppeteerBusToWindowBus(BehaviorBus, page);
+await page.waitForSelector('body');
+BehaviorBus.dispatchEvent(new BehaviorEvent('PAGE_LOAD', {url});
 ```
+
 
 ### `Behavior` Examples
 
