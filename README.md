@@ -149,9 +149,9 @@ classDiagram
 
 Behaviors are the main focus of this proposal. A `Behavior` is a plain JS object containing some metadata fields (`name`, `schema`, `version`, `description`, ...) and some `hooks` (methods that get called to manipulate a page during crawling).
 
-A simple one like `HideModalsBehavior` might only provide a single `window: PAGE_LOAD` hook that deletes any `div.modal` elements from the DOM.
+A simple one like `HideModalsBehavior` might only provide one hook `window: PAGE_LOAD` that deletes `div.modal` from the DOM.
 
-A more complex behavior like `ExpandComments` might provide a `window: PAGE_LOAD` hook that expands `<details>` elements in the body, but it could also provide an extra `puppeteer: PAGE_LOAD` hook that will run if you have puppeteer available. The Behavior is usable whether you're automating via browser extension or headless browser, because you can run it as long as you have `window`, but when puppeter's extra powers (e.g. `$$('pierce/...`) are available, the `Behvior` provides extra functionality that makes it work across shadow DOMs and inside `<iframe>`s.
+A more complex behavior like `ExpandComments` might provide a `window: PAGE_LOAD` hook that expands `<details>` elements in the body, but it could also provide an extra `puppeteer: PAGE_LOAD` hook that will run if the crawling environment uses puppeteer. The `Behavior` is usable whether you're automating via browser extension or headless browser, because you can run it as long as you have `window`, but when puppeter's extra powers (e.g. `$$('pierce/...`) are available, the `Behvior` provides extra functionality that makes it work across shadow DOMs and inside `<iframe>`s.
 
 If we all agree to use a minimal shared [event spec](#page-lifecycle-events) like this then can we all share the benefit of community-maintained pools of "Behaviors" organically on Github. You can build a fancy app store style interface in your own tool and just populate it with all Github repos tagged with `abx-behavior` + `yourtoolname`. Different crawling tools can implement different events and listeners, and when they dispatch events on `BehaviorBus` during crawling, `BehaviorBus` will run any `Behavior`s that respond to those events. You get opt-in plugin functionality for free based on the events you fire, and you barely have to modify existing crawling code at all. 
 
