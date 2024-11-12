@@ -39,7 +39,7 @@ BehiavorBus.emit({type: 'PAGE_LOAD'})
 🎭  `Behavior`s can define event listeners for normal `window` DOM events, but also for puppeteer lifecycle events, service worker / browser extension events, and other events that your crawling environment may choose to dispatch (see below for examples). It's one step up from [Greasemonkey user scripts](https://hayageek.com/greasemonkey-tutorial/#hello-world), with additional inspiration from <a href="https://github.com/webrecorder/browsertrix-behaviors"><code>browsertrix-behaviors</code></a>.
 
 **Dependencies:** *None*, uses native JS `EventTarget` API, works consistently across browser and Node environments.  
-**Easy to Use:** just `import {BehaviorBus} from `[`'behaviors.js'`](https://github.com/ArchiveBox/abx-spec-behaviors/blob/main/src/behaviors.js) (&lt; 500 lines total), load some `Behavior`s, and fire `PAGE_LOAD`!
+**Easy to Run:** just `import {BehaviorBus} from `[`'behaviors.js'`](https://github.com/ArchiveBox/abx-spec-behaviors/blob/main/src/behaviors.js) (&lt; 500 lines total), load some `Behavior`s, and fire `PAGE_LOAD`!
 
 > [!IMPORTANT]  
 > This is an early-stage proposal, we're seeking feedback from tool makers who build with browser automation!
