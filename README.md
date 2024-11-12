@@ -286,11 +286,11 @@ const SomeBehaviorThatDependsOnScreenshot = {
 }
 ```
 
-No API is provided for Behaviors to directly depend on other specific behaviors (e.g. `depends_on: ['SomeOtherBehavior']`), in general trying to do so is discouraged.  
+No API is provided for Behaviors to directly depend on other specific behaviors (e.g. `depends_on: ['SomeOtherBehavior']`), and in general trying to do so is strongly discouraged.  
 
 By listening for a generic event, it allows users to swap out `ScreenshotBehavior` for a different screenshot implementation, as long as it emits the same `EXTRACTED_SCREENSHOT` event.  
 Strive for "loose coupling" / [duck typing](https://en.wikipedia.org/wiki/Duck_typing), the only hard contracts between behaviors are the `EVENT_NAME` + args they emit/listen for.  
-Adheres to UNIX philosophy: `Expect the output of every program to become the input to another, as yet unknown, program.`.
+Respect the UNIX philosophy: `Expect the output of every program to become the input to another, as yet unknown, program.`.
 
 ---
 
