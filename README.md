@@ -165,11 +165,10 @@ You can be minimalist and only fire `PAGE_LOAD` if you don't want your crawling 
 Different browser automation environments provide different APIs to access the page during crawling. We expect *all* environments to provide `window`, but we also provide `BehaviorBus` implementations for other contexts like `puppeteer`'s `page`, or `serviceworker`'s `window`, `playwright`, and more.  
 `Behavior` `hooks` methods are grouped by the name of the context they expect (e.g. `window`), and they'll only trigger if you provide that context during your crawl.
 
-Your crawling code should set up a `new BehaviorBus()` for each context you'll have available, attach it (e.g. `window` or `puppeteer`'s `page` object) + the `Behavior`s to run, then link the busses together, and fire the [main lifecycle events](#page-lifecycle-events) when ready.
-
 ### `Behavior` Usage
 
-`Behaviors` are used as part of a crawl process implemented by a [`BehaviorDriver`](#behaviordriver):
+Your crawling code should set up a `new BehaviorBus()` for each context you'll have available, then attach that context (e.g. `window` or `puppeteer`'s `page` object) + the `Behavior`s to run and link the busses together. When the page is ready, fire the [main lifecycle events](#page-lifecycle-events) to trigger the `Behaviors`.
+
 ```javascript
 // use one of our provided  example driver implementations:
 await crawlInBrowser('https://example.com', [ExtractArticleText, DiscoverOutlinks])
