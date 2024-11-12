@@ -39,15 +39,6 @@ BehiavorBus.emit('PAGE_LOAD')
 
 🎭 It's one step up from TamperMonkey/Greasemonkey user scripts, with the ability to define event listeners for normal `window` DOM events, but also puppeteer lifecycle events, service worker / browser extension events, and other events that your crawling environment may choose to dispatch (see below for examples).
 
-**Key Concepts:**
-
-> `BehaviorSchema`, `BehaviorBusSchema`, `BehaviorEventSchema`, `BehaviorDriverSchema`
-
-- [`Behavior`](#behavior): a plugin that implements some event listener hook methods
-- [`BehaviorBus`](#behaviorbus): an event bus that coordinates emitting events and firing matching listeners
-- [`BehaviorEvent`](#behaviorevent): an event `{type: 'PAGE_LOAD', url}` that goes through a `BehaviorBus`
-- [`BehaviorDriver`](#behaviordriver): navigates to URLs, sets up `BehaviorBus` instances for browser/puppeteer/extensions, registers all the `Behavior` event listeners, and fires main crawl lifecycle events 
-
 **Dependencies:** *None*, uses JS standard library `EventTarget` system which is native in both browser and Node.  
 **Easy to Use:** all-in-one script, just import [`behaviors.js`](https://github.com/ArchiveBox/abx-spec-behaviors/blob/main/src/behaviors.js), &lt; 500 lines total
 
@@ -111,6 +102,13 @@ node src/example_puppeteer_driver.js
 ```
 
 ---
+
+**Key Concepts:**
+
+- [`Behavior`](#behavior): a plugin that implements some event listener hook methods
+- [`BehaviorBus`](#behaviorbus): an event bus that coordinates emitting events and firing matching listeners
+- [`BehaviorEvent`](#behaviorevent): an event `{type: 'PAGE_LOAD', url}` that goes through a `BehaviorBus`
+- [`BehaviorDriver`](#behaviordriver): navigates to URLs, sets up `BehaviorBus` instances for browser/puppeteer/extensions, registers all the `Behavior` event listeners, and fires main crawl lifecycle events 
 
 ```mermaid
 classDiagram
