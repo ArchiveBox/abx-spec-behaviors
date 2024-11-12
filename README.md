@@ -179,13 +179,10 @@ await crawlInPuppeteer('https://example.com', [ExtractArticleText, DiscoverOutli
 
 const page = await browser.newPage();
 await page.goto('https://example.com');
-const BehaviorBus = new PuppeteerBehaviorBus();
-BehaviorBus.attachBehaviors([ExtractArticleText, DiscoverOutlinks]);
-BehaviorBus.attachContext(page);
-
+const BehaviorBus = new PuppeteerBehaviorBus([ExtractArticleText, DiscoverOutlinks], page);
 await linkPuppeteerBusToWindowBus(BehaviorBus, page);
 await page.waitForSelector('body');
-BehaviorBus.dispatchEvent(new BehaviorEvent('PAGE_LOAD', {url});
+BehaviorBus.emit({type: 'PAGE_LOAD', url});
 ```
 
 
@@ -231,6 +228,7 @@ const DiscoverOutlinks = {
                 }
             },
          // PAGE_CAPTURE_COMPLETE: ...
+         // ... see full list of Common Events below...
         },
      // cdp: ...
      // webdriver: ...
