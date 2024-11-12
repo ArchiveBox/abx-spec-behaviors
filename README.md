@@ -5,14 +5,33 @@
 Spec for browser automation scripts to be shared between scraping/crawling/archiving tools.  
 Building on the ideas from [`browsertrix-behaviors`](https://github.com/webrecorder/browsertrix-behaviors).
 
-Designed to allow extending browser automation and crawling workflows with custom behavior, using an event-driven interface.  
+> If a company wanted to scrape Reddit threads using `playwright` today, they would probably Google `reddit playwright`, attempt to copy/paste bits of other people's functions, and likely end up writing a lot of their own `playwright` code to scroll pages, wait for lazy loading, expand comments, extract JSON, etc.  
+> *Instead*, imagine if a simple Github search for `reddit topic:abx-behavior` yielded a bunch of community-mainted, spec-compliant `reddit` scripts, ready to run with any driver library (`puppeteer`/`playwright`/`webdriver`/etc.).
+
+This spec defines a common format for user scripts that allows them to be run by many different browser automation driver libraries.
 ```javascript
-BehiavorBus.on('PAGE_LOAD', async (...) => {document.queurySelector('#modal').remove()})
-BehiavorBus.on('DISCOVERED_VIDEO',  async (...) => ... extract subtitles and comments ...)
-BehiavorBus.on('DISCOVERED_OUTLINK',  async (...) => ... add it to crawl queue  ...)
+// example of a simple Behavior that could be shared via Github/Gist
+const ScrollDownBehavior = {
+    name: 'ScrollDownBehavior',
+    schema: 'BehaviorSpec@0.1.0',
+    version: '0.9.9',
+    description: 'Scroll the page down after it loads to trigger any lazy-loaded content, then scroll back up.',
+    documentation: 'https://github.com/example/ScrollDownBehavior',
+    hooks: {
+        PAGE_LOAD: async (event, BehaviorBus, window) => {
+            window.scrollTo({top: 1400, behavior: 'smooth'})
+            setTimeout(() => {window.scrollTo({top: 0, behavior: 'smooth'})}, 2000)
+        },
+    },
+}
+
+// to use this Behavior in a crawl, load it and fire the PAGE_LOAD once you have `window` ready:
+BehaviorBus.attachBehaviors([ScrollDownBehavior])
+BehaviorBus.attachContext(window); 
+BehiavorBus.emit('PAGE_LOAD')
 ```
 
-It's one step up from TamperMonkey/Greasemonkey, with the ability to define event listeners for normal `window` DOM events, but also puppeteer lifecycle events, service worker / browser extension events, and other events that your crawling environment may choose to dispatch.
+It's one step up from TamperMonkey/Greasemonkey user scripts, with the ability to define event listeners for normal `window` DOM events, but also puppeteer lifecycle events, service worker / browser extension events, and other events that your crawling environment may choose to dispatch (see below for examples).
 
 **Key Concepts:**
 
@@ -38,9 +57,6 @@ Everyone scraping today has to hide the same popups / block the same ads / log i
 [Greasemonkey](https://en.wikipedia.org/wiki/Greasemonkey) grew into a huge [community](https://github.com/awesome-scripts/awesome-userscripts) because their very [very simple spec](https://hayageek.com/greasemonkey-tutorial/#hello-world) allows anyone to quickly write a function and [share it with others](https://greasyfork.org/en), even if they're using a different extension to run it (e.g. [Tampermonkey](https://www.tampermonkey.net/), [ViolentMonkey](https://violentmonkey.github.io/), FireBug, etc.).  
   
 This `Behavior` spec proposal aims to do something similar, but for slightly more powerful user scripts that can leverage `puppeteer`, `playwright`, and other crawling & scraping driver APIs.
-
-> If a company wanted to scrape Reddit threads using `playwright` today, they would probably Google `reddit playwright`, attempt to copy/paste bits of other people's functions, and likely end up writing a lot of their own `playwright` code to scroll pages, wait for lazy loading, expand comments, extract JSON, etc.  
-> Instead, imagine if a simple Github search for `reddit topic:abx-behavior` yielded a bunch of community-mainted, spec-compliant `reddit` scripts, ready to run with any driver library (`puppeteer`/`playwright`/`webdriver`/etc.).
 
 #### Use Cases
 
