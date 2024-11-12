@@ -4,23 +4,23 @@ function _objIsSerializable(obj) {
     return json_str.startsWith('{') && json_str.endsWith('}');
 }
 
-function _validateBehaviorEvent(event) {
+function _validateBehaviorEventObject(event) {
     if (!event?.type || typeof event.type !== 'string') {
         throw new Error(`Event must have a string type, got ${JSON.stringify(event.type)}`);
     }
-    if (![...event.type].every(letter => letter.match(/[A-Z_]/))) {
-        throw new Error(`Event type must be uppercase letters and underscores only (e.g. PAGE_LOAD), got ${event.type}`);
+    if (![...event.type].every(letter => letter.match(/[A-Z0-9_]/))) {
+        throw new Error(`Event type must be [A-Z0-9_] uppercase letters and underscores only (e.g. PAGE_LOAD), got ${event.type}`);
     }
     if (typeof event.metadata !== 'object' || event.metadata === null) {
         throw new Error(`Event metadata must be an object, got ${JSON.stringify(event.metadata)}`);
     }
     if (typeof event.metadata.id !== 'string' || !event.metadata.id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)) {
-        throw new Error(`Event metadata.id must be a UUID, got ${event.metadata.id}`);
+        throw new Error(`Event metadata.id must be a valid UUID4, got ${event.metadata.id}`);
     }
     if (typeof event.metadata.timestamp !== 'number' || isNaN(event.metadata.timestamp) || event.metadata.timestamp < 0) {
         throw new Error(`Event metadata.timestamp must be a non-negative number, got ${event.metadata.timestamp}`);
     }
-    if (!Array.isArray(event.metadata.path) || !event.metadata.path.every(sender => typeof sender === 'string' && sender.match(/^[a-zA-Z_]+$/))) {
+    if (!Array.isArray(event.metadata.path) || !event.metadata.path.every(sender => typeof sender === 'string' && sender.match(/^[a-zA-Z0-9_]+$/))) {
         throw new Error(`Event metadata.path must be an array of strings like ["window", "puppeteer", "serviceWorker"], got ${JSON.stringify(event.metadata.path)}`);
     }
     if (!_objIsSerializable(event)) {
@@ -37,17 +37,15 @@ class BehaviorEvent extends CustomEvent {
     constructor(dispatch_type, event_object = {}, extra_metadata = {}) {
         if (typeof dispatch_type === 'object') {
             // if they called BehaviorEvent({type: 'PAGE_LOAD', url: 'https://example.com'}, {...})
-            // only (event_object), without string dispatch_type first arg before it
+            // with a raw event object as the first arg (instead of string event type as first arg + event object as second arg)
             event_object = {...dispatch_type, ...(event_object || {}), ...(extra_metadata || {}), ...(dispatch_type?.detail || {}), ...(event_object.detail || {})};
             dispatch_type = event_object.type;
         }
-        if (event_object?.type && event_object.type !== dispatch_type) {
-            if (dispatch_type != '*') {
-                throw new Error(`BehaviorEvent(${dispatch_type}, {type: "${event_object.type}", ...}) dispatch_type doesn't match event {type}`);
-            }
+        if (event_object?.type && (event_object.type !== dispatch_type) && (dispatch_type !== '*')) {
+            throw new Error(`BehaviorEvent(${dispatch_type}, {type: "${event_object.type}", ...}) dispatch_type doesn't match {type} set inside event object`);
         }
         const {type=dispatch_type, metadata, ...detail} = event_object
-        const event_detail = _validateBehaviorEvent({
+        const full_event_object = {
             type,                                 // e.g. 'PAGE_LOAD'
             metadata: {
                 schema: 'BehaviorEventSchema@0.1.0',
@@ -58,20 +56,19 @@ class BehaviorEvent extends CustomEvent {
                 ...(extra_metadata || {}),        // e.g. ...{id: '1234-...', timestamp: ..., path: [...], ...} (from provided extra_metadata arg, if one is passed)
             },
             ...detail,                            // e.g. ...{url: 'https://example.com', selector: '#video', xpath: '//video', ...}
-        })
+        }
 
-        // init CustomEvent(event_type, detail=event_detail)
-        super(dispatch_type, {detail: event_detail});          // e.g. super('PAGE_LOAD', {type: 'PAGE_LOAD', metadata: {...}, ...detail})
-        _validateBehaviorEvent(this.detail);
-        this.metadata = this.detail.metadata;
+        super(dispatch_type, {detail: full_event_object});     // new CustomEvent('PAGE_LOAD', {type: 'PAGE_LOAD', metadata: {...}, ...detail})
+        _validateBehaviorEventObject(this.detail);
+        this.metadata = this.detail.metadata;                  // shortcut so that (new BehaviorEvent(...)).metadata === {...event}.metadata
     }
 }
 
-// Base class with common event handling logic
+// Base class for behaviors event bus, handles consuming/emitting events and triggering event listeners (+ dependency-injects bus & context args)
 class BaseBehaviorBus extends EventTarget {
     schema = 'BehaviorBusSchema@0.1.0';
 
-    constructor() {
+    constructor(behaviors=null, context=null) {
         super();
         this.context = null;               // e.g. window={navigator, window, document, BehaviorBus, ...}, puppeteer={browser, page, BehaviorBus, ...}, serviceWorker={navigator, BehaviorBus, ...}
         this.behaviors = null;             // e.g. [{hooks: {window: {PAGE_LOAD: (event, BehaviorBus, window) => {}}}}, {hooks: {puppeteer: {FOUND_CONTENT: (event, BehaviorBus, page) => {}}}}]
@@ -83,36 +80,31 @@ class BaseBehaviorBus extends EventTarget {
         if (!['PuppeteerBehaviorBus', 'WindowBehaviorBus', 'ServiceWorkerBehaviorBus'].includes(this.name)) {
             throw new Error(`BehaviorBus subclass name must be one of ['PuppeteerBehaviorBus', 'WindowBehaviorBus', 'ServiceWorkerBehaviorBus'], got ${this.name}`);
         }
-    }
-
-    attachContext(context) {          // e.g. WindowBehaviorBus.attachContext(window)
-        if (!context) return;
-        this.context = context;
-        this._notifyIfReady();
+        this.attachBehaviors(behaviors);
+        this.attachContext(context);
     }
     attachBehaviors(behaviors) {   // e.g. WindowBehaviorBus.attachBehaviors([{hooks: {window: {PAGE_LOAD: (event, BehaviorBus, window) => {}}}}])
         if (!behaviors) return;
         this.behaviors = [...(this.behaviors || []), ...behaviors]
         for (const behavior of behaviors) {
-            const handlers_for_this_context = behavior.hooks[this.name] ||  behavior.hooks[this.name.toLowerCase().replace('behaviorbus', '')] || {};
+            const handlers_for_this_context = behavior.hooks[this.name] ||  behavior.hooks[this.name.toLowerCase().replace('behaviorbus', '')] || {};   // accept {hooks: {window: {...}}} OR {hooks: {WindowBehaviorBus: {...}}}
             for (const [eventName, handler] of Object.entries(handlers_for_this_context)) {
                 this.addEventListener(eventName, handler, {behavior_name: behavior.name || 'UNKNOWN_BEHAVIOR'});
             }
         }
         this._notifyIfReady()
     }
-
-
-    _notifyIfReady() {
-        const is_ready = this.context !== null && this.behaviors !== null
-        if (is_ready && this._resolveReady) {
-            this._resolveReady();
-        }
-        return is_ready;
+    attachContext(context) {       // e.g. WindowBehaviorBus.attachContext(window)
+        if (!context) return;
+        this.context = context;
+        this._notifyIfReady();
     }
-    
+    _notifyIfReady() {
+        const is_ready = (this.context !== null) && (this.behaviors !== null)
+        if (is_ready && this._resolveReady) this._resolveReady();
+    }
     async waitUntilReady() {
-        const is_ready = this.context !== null && this.behaviors !== null;
+        const is_ready = (this.context !== null) && (this.behaviors !== null);
         if (is_ready) return;
 
         this._readyPromise = this._readyPromise || new Promise((resolve) => {this._resolveReady = resolve});
@@ -122,15 +114,17 @@ class BaseBehaviorBus extends EventTarget {
     }
 
     _getListenerWithBusAndContextArgsPopulated(handler, behavior_name='UNKNOWN') {
+        // wrap the event listener function so that this BehaviorBus and its context are automatically dependency-injected via args when it fires
         const wrappedListener = async (event) => {
             await this.waitUntilReady();
             const BehaviorBus = this;
-            const context = BehaviorBus.context;
+            const context = this.context;
+            const additional_breadcrumbs = event.detail.metadata.path.includes(behavior_name) ? [] : [behavior_name]  // add the name of the behavior that defined this handler to the event's metadata for easier flow tracing
             const event_detail = {
                 ...event.detail,
                 metadata: {
                     ...event.detail.metadata,
-                    path: [...event.detail.metadata.path, ...(event.detail.metadata.path.includes(behavior_name) ? [] : [behavior_name])],
+                    path: [...event.detail.metadata.path, ...additional_breadcrumbs],
                 },
             };
             await handler(event_detail, BehaviorBus, context);
@@ -261,4 +255,4 @@ if (globalThis.navigator) {
     }
 }
 
-export { BehaviorEvent, WindowBehaviorBus, PuppeteerBehaviorBus, ServiceWorkerBehaviorBus }
+export { BehaviorEvent, WindowBehaviorBus, PuppeteerBehaviorBus, ServiceWorkerBehaviorBus };
