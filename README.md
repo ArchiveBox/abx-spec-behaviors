@@ -530,11 +530,14 @@ plugins to listen for changes and coordinate their own logic.
 
 ## `BehaviorDriver`
 
-`BehaviorDriver`s are just like `Behavior`s in that they implement some event listeners.  
-Drivers are designed to implement the core events used by all the other behaviors as
-their "standard library" of utilities, e.g. filesystem IO, adding to crawl queue, etc...
+`BehaviorDriver`s are actually just `Behavior`s like any other, with the same metadata fields + `hooks`.  
+The only distinction is that `BehaviorDriver`s generally only implement `hooks` for the [common core events](#common-event-types)
+that other `Behavior`s depend on (sort of like a standard library), or `hooks` for handling outputs e.g. filesystem IO, adding to crawl queue, etc...
 
-Drivers can maintain some persistent state across crawl as well (just like `Behaviors`).
+If a crawling project cares about any events or outputs that might be emitted by `Behavior`s during a crawl, 
+then it should implement a `BehaviorDriver` to listen for those events it cares about.
+
+Like normal `Behavior`s, `BehaviorDriver`s also can also maintain some `state` internally (if needed).
 ```javascript
 const BrowserCrawlDriver = {
     name: 'BrowserCrawlDriver',
@@ -570,7 +573,7 @@ const BrowserCrawlDriver = {
 ```
 
 
-To see how Behaviors would be run by different tools, check out the example drivers:
+To see how drivers might implement the core event handlers differently, check out the example drivers:
 
 - [`src/example_puppeteer_driver.js`](https://github.com/ArchiveBox/behaviors-spec/blob/main/src/example_puppeteer_driver.js)
 - [`src/example_browser_driver.js`](https://github.com/ArchiveBox/behaviors-spec/blob/main/src/example_browser_driver.js)
@@ -585,16 +588,18 @@ Here's how you can test a driver:
 ```javascript
 window.location.href = 'https://example.com'
 
-// driver is initialized right after navigation starts, before page is loaded
+// driver is registed on the bus just like any other Behavior
 const BehaviorBus = new WindowBehaviorBus([BrowserCrawlDriver, ...window.BEHAVIORS], window);
 
-// you can test the driver implementation by firing one of the events it handles
+// to test the driver, just emit one of the event types it handles
 BehaviorBus.emit({type: 'FS_WRITE_FILE', path: 'text.txt', content: 'testing writing to filesystsem using drivers FS_WRITE_FILE implementation'})
 ```
 
-### `BehaviorDriver` Example Output
+---
 
-Here's the example output from a full puppeteer crawl run with all the example behaviors:
+## Full Crawl Example Output
+
+Here's the example output from a full puppeteer crawl run with all the example `Behavior`s:
 ```javascript
 $ cd src/
 $ node ./example_puppeteer_driver.js
