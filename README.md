@@ -262,7 +262,7 @@ To see more example behaviors, check out: [`src/example_behaviors.js`](https://g
 
 ### `Behavior` Composition
 
-If you want to have one behavior depend on the output of another, the second behavior can simply listen for the relevant events emitted by the first one.  
+If you want to have a `Behavior` depend on the output of an earlier one, it can simply listen for the relevant events it needs.  
 
 ```javascript
 const ScreenshotBehavior = {
