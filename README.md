@@ -33,7 +33,7 @@ It's one step up from TamperMonkey/Greasemonkey, with the ability to define even
 
 > To create an inter-operable spec for browser scripts that many scraping and digital archiving projects can share.
 
-Everyone dealing with scraping today has to hide the same popups / ads / log into sites / get around CAPTCHAs / expand comments / etc. leading to massive duplication of effort. Most projects manually implement their own scripts for every site they want to scrape, and there's no good way to *share* those scripts consistently.
+Everyone scraping today has to hide the same popups / block the same ads / log into the same sites / get around the same CAPTCHAs / expand the same comments, leading to a massive duplication of effort. Most projects manually write their own scripts for every site they want to scrape, and there's no good way to *share* those scripts consistently.
 
 [Greasemonkey](https://en.wikipedia.org/wiki/Greasemonkey) grew into a huge [community](https://github.com/awesome-scripts/awesome-userscripts) because their very [very simple spec](https://hayageek.com/greasemonkey-tutorial/#hello-world) allows anyone to quickly write a function and [share it with others](https://greasyfork.org/en), even if they're using a different extension to run it (e.g. [Tampermonkey](https://www.tampermonkey.net/), [ViolentMonkey](https://violentmonkey.github.io/), FireBug, etc.).  
   
