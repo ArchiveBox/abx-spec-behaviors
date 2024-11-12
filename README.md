@@ -286,8 +286,8 @@ This is based on the UNIX philosophy of `Expect the output of every program to b
 
 ## `BehaviorBus`
 
-`BehaviorBus` extends [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget) and is a simple event bus that can consume/emit events + trigger event listeners.  
-`BehaviorEvent` extends [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent), both use the native JS event system, no `npm` libs needed.
+`BehaviorBus` extends [`EventTarget`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget), a simple event bus that can consume/emit events + trigger event listeners.  
+`BehaviorEvent` extends [`CustomEvent`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent), both use the native JS event system (and work the same as DOM events).
 
 ### `BehaviorBus` Usage
 
