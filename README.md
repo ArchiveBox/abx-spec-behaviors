@@ -19,11 +19,11 @@ const ScrollDownBehavior = {
     documentation: 'https://github.com/example/ScrollDownBehavior',
     hooks: {
         PAGE_LOAD: async (event, BehaviorBus, window) => {
-            window.scrollTo({top: 1400, behavior: 'smooth'})   // scroll the page down by 1400px
-            setTimeout(() => {                                 // wait 2s, then scroll back up
+            window.scrollTo({top: 1400, behavior: 'smooth'})   // scroll page down by 1400px
+            setTimeout(() => {                                 // wait 2s, scroll back up
                 window.scrollTo({top: 0, behavior: 'smooth'})
-                document.querySelector('#loading-indicator').remove()  // can modify the DOM too
-                BehaviorBus.emit({type: 'SCROLL_COMPLETE'})
+                document.querySelector('#loading-indicator').remove()  // can modify the DOM
+                BehaviorBus.emit({type: 'SCROLL_COMPLETE'})            // can emit events
             }, 2000)
         },
     },
