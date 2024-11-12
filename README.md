@@ -531,11 +531,11 @@ plugins to listen for changes and coordinate their own logic.
 ## `BehaviorDriver`
 
 `BehaviorDriver`s are actually just `Behavior`s like any other, with the same metadata fields + `hooks`.  
-The only distinction is that `BehaviorDriver`s generally only implement `hooks` for the [common core events](#common-event-types)
-that other `Behavior`s depend on (sort of like a standard library), or `hooks` for handling outputs e.g. filesystem IO, adding to crawl queue, etc...
+The only distinction is that `BehaviorDriver`s generally implement `hooks` to handle the [discovery events](#common-event-types)
+that `Behavior`s use to *announce outputs* that you can do something with e.g. extracted video/audio/text, URLs to add to crawl queue, etc...
 
-If a crawling project cares about any events or outputs that might be emitted by `Behavior`s during a crawl, 
-then it should implement a `BehaviorDriver` to listen for those events it cares about.
+If a crawling project wants to use `Behavior`s to extract things out of pages during a crawl, 
+then it should implement a `BehaviorDriver` to listen for the announcements about content it cares about.
 
 Like normal `Behavior`s, `BehaviorDriver`s also can also maintain some `state` internally (if needed).
 ```javascript
@@ -565,7 +565,7 @@ const BrowserCrawlDriver = {
                 BrowserCrawlDriver.state.output_texts.push(event.text);
             },
             // DISCOVERED_MEDIA: async (event, BehaviorBus, page) => {
-            //     BehaviorBus.emit({type: 'CALL_EXTERNAL_TOOL', bin: 'yt-dlp', cmd: ['yt-dlp', event.url]})
+            //     SomeRemoteAPI.submit_new_job('yt-dlp', ['--add-metadata', event.url])
             // })
         },
     },
