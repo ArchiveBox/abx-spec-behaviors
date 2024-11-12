@@ -63,6 +63,7 @@ class BehaviorEvent extends CustomEvent {
         // init CustomEvent(event_type, detail=event_detail)
         super(dispatch_type, {detail: event_detail});          // e.g. super('PAGE_LOAD', {type: 'PAGE_LOAD', metadata: {...}, ...detail})
         _validateBehaviorEvent(this.detail);
+        this.metadata = this.detail.metadata;
     }
 }
 
