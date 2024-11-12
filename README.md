@@ -37,10 +37,10 @@ BehaviorBus.attachContext(window);
 BehiavorBus.emit('PAGE_LOAD')
 ```
 
-🎭 It's one step up from TamperMonkey/Greasemonkey user scripts, with the ability to define event listeners for normal `window` DOM events, but also puppeteer lifecycle events, service worker / browser extension events, and other events that your crawling environment may choose to dispatch (see below for examples).
+🎭 It's one step up from Greasemonkey user scripts. You can define event listeners for normal `window` DOM events, but also for puppeteer lifecycle events, service worker / browser extension events, and other events that your crawling environment may choose to dispatch (see below for examples).
 
-**Dependencies:** *None*, uses JS standard library `EventTarget` system which is native in both browser and Node.  
-**Easy to Use:** all-in-one script, just import [`behaviors.js`](https://github.com/ArchiveBox/abx-spec-behaviors/blob/main/src/behaviors.js), &lt; 500 lines total
+**Dependencies:** *None*, uses native JS `EventTarget` API, works consistently across browser and Node.  
+**Easy to Use:** just import [`behaviors.js`](https://github.com/ArchiveBox/abx-spec-behaviors/blob/main/src/behaviors.js) (&lt; 500 lines total) in any environment
 
 > [!IMPORTANT]  
 > This is an early-stage proposal, we're seeking feedback from tool makers who build with browser automation!
