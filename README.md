@@ -147,7 +147,7 @@ classDiagram
 
 ## `Behavior`
 
-Behaviors are the main focus of this proposal. A `Behavior` is sharable bundle of hook methods that will run in the context of a page during crawling.
+Behaviors are the main focus of this proposal. A `Behavior` is just some hook methods that manipulate a page during crawling.
 
 A simple `Behavior` like `HideModalsBehavior` might only provide a single `browser: PAGE_LOAD` that deletes `div.modal` elements after page load is complete.
 
