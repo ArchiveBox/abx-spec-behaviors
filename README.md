@@ -5,9 +5,9 @@
 Spec for browser automation scripts to be shared between scraping/crawling/archiving tools.  
 Building on the ideas from [`browsertrix-behaviors`](https://github.com/webrecorder/browsertrix-behaviors).
 
-> 🤔 If a company wanted to scrape Reddit threads using `playwright` today, they would probably Google `reddit playwright`, attempt to copy/paste bits of other people's functions, and likely end up writing a lot of their own `playwright` code to scroll pages, wait for lazy loading, expand comments, extract JSON, etc.  
+> 🤔 To scrape Reddit using `playwright` today, you'd probably Google `reddit playwright`, attempt to copy/paste some examples, and likely end up writing your own script to scroll pages, wait for lazy loading, expand comments, extract JSON, etc.  
 >  
-> 🚀 *Instead*, imagine if a simple Github search for `reddit topic:abx-behavior` yielded a bunch of community-mainted, spec-compliant `reddit` scripts, ready to run with any driver library (`puppeteer`/`playwright`/`webdriver`/etc.).
+> 🚀 *Instead*, imagine if a simple Github search for `reddit topic:abx-behavior` yielded hundreds of community-mainted, spec-compliant `reddit` scripts for many different tasks, ready to run with any driver library (`puppeteer`/`playwright`/`webdriver`/etc.).
 
 This spec defines a common format for user scripts that allows them to be run by many different browser automation driver libraries.
 ```javascript
