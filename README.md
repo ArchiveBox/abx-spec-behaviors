@@ -50,7 +50,7 @@ BehiavorBus.emit({type: 'PAGE_LOAD'})
 
 Everyone scraping today has to hide the same popups / block the same ads / log into the same sites / get around the same CAPTCHAs / expand the same comments, leading to a massive duplication of effort. Most projects manually write their own scripts for every site they want to scrape, and there's no good way to *share* those scripts consistently.
 
-[Greasemonkey](https://en.wikipedia.org/wiki/Greasemonkey) grew into a [huge community](https://github.com/awesome-scripts/awesome-userscripts) because their very [very simple spec](https://hayageek.com/greasemonkey-tutorial/#hello-world) allows anyone to quickly write a function and [share it](https://greasyfork.org/en) in a way that's compatible with many extensions (e.g. [Tampermonkey](https://www.tampermonkey.net/), [ViolentMonkey](https://violentmonkey.github.io/), FireBug, etc.).  
+[Greasemonkey](https://en.wikipedia.org/wiki/Greasemonkey) grew into a [huge community](https://github.com/awesome-scripts/awesome-userscripts) because their very [very simple spec](https://hayageek.com/greasemonkey-tutorial/#hello-world) allows anyone to quickly write a function and [share it](https://greasyfork.org/en) in a way that's compatible with many different driver extensions (e.g. [Tampermonkey](https://www.tampermonkey.net/), [ViolentMonkey](https://violentmonkey.github.io/), FireBug, etc.).  
   
 This `Behavior` spec proposal aims to do something similar, but for slightly more powerful user scripts that can leverage `puppeteer`, `playwright`, and other crawling & scraping driver APIs.
 
