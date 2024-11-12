@@ -56,7 +56,7 @@ This `Behavior` spec proposal aims to do something similar, but for slightly mor
 #### Use Cases
 
 No one wants to maintain all the user scripts needed effectively crawl millions of different websites alone.  
-Here are some examples of things that could be implemented as behaviors and shared between these communities:
+Here are some examples of things that could be implemented as `Behavior`s and shared between tools:
 
 - `scroll down to load infiniscroll content`
 - `expand/unroll reddit/twitter comment threads automatically`
