@@ -234,6 +234,7 @@ class PuppeteerBehaviorBus extends BaseBehaviorBus {
 }
 
 
+global.BehaviorBus = new WindowBehaviorBus(global.BEHAVIORS || [], global)
 
 var all_exports = { BehaviorEvent, WindowBehaviorBus, PuppeteerBehaviorBus, ServiceWorkerBehaviorBus }
 
