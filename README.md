@@ -680,5 +680,6 @@ $ node ./example_puppeteer_driver.js
 - Built on: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
 - Inspired by: https://pluggy.readthedocs.io/en/stable/index.html
 * Alternatives:
-    * https://github.com/JuroOravec/portadom
-    * https://docs.browserless.io/browserql/
+    * https://github.com/JuroOravec/portadom (unified DOM manipulation interface using cheerio on top of playwright/pupeteer/DOM)
+    * https://docs.browserless.io/browserql/ (DSL on top of puppeteer/playwright/DOM)
+    * https://quasar.dev/quasar-cli-vite/developing-browser-extensions/bex-bridge/ (event bus bridge between extension and page contexts)
