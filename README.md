@@ -679,3 +679,6 @@ $ node ./example_puppeteer_driver.js
 - Browsertrix's existing behaviors system: https://github.com/webrecorder/browsertrix-behaviors
 - Built on: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
 - Inspired by: https://pluggy.readthedocs.io/en/stable/index.html
+* Alternatives:
+    * https://github.com/JuroOravec/portadom
+    * https://docs.browserless.io/browserql/
