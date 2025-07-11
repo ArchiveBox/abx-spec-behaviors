@@ -78,11 +78,13 @@ We're aiming to foster easier collaboration & sharing of browser automation snip
 - https://webrecorder.net (https://github.com/webrecorder/browsertrix-behaviors)
 - https://archive.org
 - https://conifer.rhizome.org
+- https://browser-use.com
 - https://linkwarden.app
 - https://github.com/gildas-lormeau/singlefile
 - https://github.com/bellingcat/auto-archiver
 - https://docs.anthropic.com/en/docs/build-with-claude/computer-use
 - https://docs.anthropic.com/en/docs/build-with-claude/tool-use / and other AI function calling systems
+- https://mcp-b.ai/
 
 #### Industry
 - https://reset.tech
@@ -679,6 +681,7 @@ $ node ./example_puppeteer_driver.js
 - Browsertrix's existing behaviors system: https://github.com/webrecorder/browsertrix-behaviors
 - Built on: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
 - Inspired by: https://pluggy.readthedocs.io/en/stable/index.html
+- ⭐️ Ideas from abx-spec-behaviors have since gone into: https://github.com/browser-use/bubus/ and https://github.com/browser-use/cdp-use
 * Alternatives:
     * https://modelcontextprotocol.io/introduction + https://github.com/modelcontextprotocol/servers/tree/main/src/puppeteer
     * https://github.com/JuroOravec/portadom (unified DOM manipulation interface using cheerio on top of playwright/pupeteer/DOM)
